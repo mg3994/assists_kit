@@ -15,6 +15,10 @@ void main() {
     defineReflectiveTests(PositionedMustBeOutermostTest);
     defineReflectiveTests(SnackBarActionNotWiredTest);
     defineReflectiveTests(OffstageLosesStateTest);
+    defineReflectiveTests(RawTextEscapeFalseTest);
+    defineReflectiveTests(BSectionUniqueIdTest);
+    defineReflectiveTests(BWidgetTypeRequiredTest);
+    defineReflectiveTests(BLoopRequiredArgsTest);
   });
 }
 
@@ -185,5 +189,86 @@ class OffstageLosesStateTest extends RuleTest {
   Future<void> test_reportsOffstage() => assertWarning(
     "Widget build() => Offstage(child: Text('x'));",
     'Offstage',
+  );
+}
+
+@reflectiveTest
+class RawTextEscapeFalseTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = RawTextEscapeFalse();
+    super.setUp();
+  }
+
+  Future<void> test_reportsUnescapedBloggerTagInText() => assertWarning(
+    "Component build() => BloggerText('<data:skin.vars.keycolor/>');",
+    "'<data:skin.vars.keycolor/>'",
+  );
+
+  Future<void> test_quietWithEscapeFalse() => assertClean(
+    "Component build() => BloggerText('<data:skin.vars.keycolor/>', escape: false);",
+  );
+}
+
+@reflectiveTest
+class BSectionUniqueIdTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BSectionUniqueId();
+    super.setUp();
+  }
+
+  Future<void> test_reportsDuplicateBSectionId() => assertWarning(
+    '''
+Component build() => div([
+  BSection(id: 'header'),
+  BSection(id: 'header'),
+]);
+''',
+    "id: 'header'",
+    occurrence: 2,
+  );
+
+  Future<void> test_quietWithUniqueIds() => assertClean('''
+Component build() => div([
+  BSection(id: 'header'),
+  BSection(id: 'footer'),
+]);
+''');
+}
+
+@reflectiveTest
+class BWidgetTypeRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BWidgetTypeRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingType() => assertWarning(
+    "Component build() => BWidget(id: 'main');",
+    'BWidget',
+  );
+
+  Future<void> test_quietWithType() => assertClean(
+    "Component build() => BWidget(id: 'main', type: 'Blog');",
+  );
+}
+
+@reflectiveTest
+class BLoopRequiredArgsTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BLoopRequiredArgs();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingValues() => assertWarning(
+    "Component build() => BLoop(varName: 'post');",
+    'BLoop',
+  );
+
+  Future<void> test_quietWithValuesAndVarName() => assertClean(
+    "Component build() => BLoop(values: 'data:posts', varName: 'post');",
   );
 }

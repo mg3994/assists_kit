@@ -24,9 +24,10 @@ import 'package:analyzer_testing/analysis_rule/analysis_rule.dart';
 import 'package:assists_kit/main.dart';
 import 'package:test/test.dart';
 
+import 'blogger_theme_stub.dart';
 import 'dartnative_stub.dart';
 
-const _import = "import 'package:dartnative/dartnative.dart';\n\n";
+const _import = "// ignore_for_file: unused_import\nimport 'package:dartnative/dartnative.dart';\nimport 'package:blogger_theme/blogger_theme.dart';\n\n";
 
 /// Base for rule tests: the stub package is available and [rule] is set by
 /// the subclass. Test code may omit the dartnative import; it is prepended.
@@ -34,14 +35,22 @@ abstract class RuleTest extends AnalysisRuleTest {
   @override
   void setUp() {
     newPackage('dartnative').addFile('lib/dartnative.dart', dartnativeStub);
+    newPackage('blogger_theme').addFile('lib/blogger_theme.dart', bloggerThemeStub);
     super.setUp();
   }
 
   /// Asserts that [code] (without the import line) reports exactly one
   /// diagnostic of the rule under test covering [highlighted].
-  Future<void> assertWarning(String code, String highlighted) async {
+  Future<void> assertWarning(
+    String code,
+    String highlighted, {
+    int occurrence = 1,
+  }) async {
     final source = _import + code;
-    final offset = source.indexOf(highlighted);
+    var offset = -1;
+    for (var i = 0; i < occurrence; i++) {
+      offset = source.indexOf(highlighted, offset + 1);
+    }
     expect(offset, greaterThanOrEqualTo(0), reason: 'highlight not found');
     await assertDiagnostics(source, [lint(offset, highlighted.length)]);
   }
@@ -63,6 +72,7 @@ abstract class AssistTest extends AnalysisRuleTest {
     // The base class insists on a rule under test; assists have none.
     rule = _NoRule();
     newPackage('dartnative').addFile('lib/dartnative.dart', dartnativeStub);
+    newPackage('blogger_theme').addFile('lib/blogger_theme.dart', bloggerThemeStub);
     super.setUp();
   }
 

@@ -43,7 +43,17 @@ class Wrapper {
   /// nothing inside one, where the keyword would be redundant.
   final String leading;
 
-  const Wrapper(this.id, this.name, this.slot, {this.leading = ''});
+  /// Whether the list of children is passed as a positional argument `[...]`
+  /// rather than a named `children: [...]` argument.
+  final bool isPositionalChildren;
+
+  const Wrapper(
+    this.id,
+    this.name,
+    this.slot, {
+    this.leading = '',
+    this.isPositionalChildren = false,
+  });
 
   /// Whether the slot takes a closure, which can never be part of a
   /// constant expression.
@@ -69,6 +79,33 @@ const _wrappers = [
   Wrapper('column', 'Column', WrapSlot.children),
   Wrapper('row', 'Row', WrapSlot.children),
   Wrapper('stack', 'Stack', WrapSlot.children),
+  Wrapper('div', 'div', WrapSlot.children, isPositionalChildren: true),
+  Wrapper(
+    'bSection',
+    'BSection',
+    WrapSlot.children,
+    leading: "id: 'section-id', ",
+  ),
+  Wrapper(
+    'bIf',
+    'BIf',
+    WrapSlot.children,
+    leading: "'cond', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bLoop',
+    'BLoop',
+    WrapSlot.children,
+    leading: "values: 'data:posts', varName: 'post', ",
+  ),
+  Wrapper(
+    'bIncludable',
+    'BIncludable',
+    WrapSlot.children,
+    leading: "id: 'includable-id', ",
+  ),
+  Wrapper('fragment', 'Fragment', WrapSlot.children, isPositionalChildren: true),
   Wrapper('builder', 'Builder', WrapSlot.builder),
   Wrapper(
     'futureBuilder',
@@ -177,9 +214,10 @@ class WrapWith extends ResolvedCorrectionProducer {
       for (final sibling in siblings)
         reindentContinuationLines(utils.getNodeText(sibling), one * 2),
     ].join(',$eol$indent$one$one');
+    final childrenLabel = _wrapper.isPositionalChildren ? '' : 'children: ';
     final text =
         '${_wrapper.name}($eol'
-        '$indent${one}children: [$eol'
+        '$indent$one$childrenLabel[$eol'
         '$indent$one$one$items,$eol'
         '$indent$one],$eol'
         '$indent)';
@@ -279,8 +317,9 @@ String wrapText(Expression creation, Wrapper wrapper, CorrectionUtils utils) {
   final one = utils.oneIndent;
   final indent = lineIndent(utils.getText(0, creation.offset), creation.offset);
   if (wrapper.slot == WrapSlot.children) {
+    final childrenLabel = wrapper.isPositionalChildren ? '' : 'children: ';
     return '$name($eol'
-        '$indent$one${leading}children: [$eol'
+        '$indent$one$leading$childrenLabel[$eol'
         '$indent$one$one${reindentContinuationLines(source, one * 2)},$eol'
         '$indent$one],$eol'
         '$indent)';

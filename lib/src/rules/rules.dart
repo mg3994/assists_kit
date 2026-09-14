@@ -399,6 +399,222 @@ class _OffstageVisitor extends CreationVisitor {
   }
 }
 
+/// `Text` containing Blogger XML tags needs `escape: false`.
+class RawTextEscapeFalse extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_raw_text_escape_false',
+    "Text containing Blogger XML tags will be XML-escaped unless 'escape: false' is specified.",
+    correction: "Add 'escape: false' or use BEval / RawText.",
+  );
+
+  RawTextEscapeFalse()
+    : super(
+        name: 'blogger_theme_raw_text_escape_false',
+        description:
+            'Passing Blogger XML expressions like <data:.../> inside Text without escape: false results in escaped XML entities in generated templates.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _RawTextEscapeVisitor(this, context),
+    );
+  }
+}
+
+class _RawTextEscapeVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _RawTextEscapeVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'Text') && !isBloggerThemeCreation(node, 'BloggerText')) return;
+    final args = node.argumentList.arguments;
+    if (args.isEmpty) return;
+    final firstArg = args.first;
+    final argSource = firstArg.toSource();
+    if (!argSource.contains('<data:') &&
+        !argSource.contains('<b:') &&
+        !argSource.contains('</b:')) {
+      return;
+    }
+    final escapeArg = namedArgument(node, 'escape');
+    if (escapeArg == null || escapeArg.argumentExpression.toSource() != 'false') {
+      rule.reportAtNode(firstArg);
+    }
+  }
+}
+
+/// `BSection` or `BWidget` requires a unique `id` attribute.
+class BSectionUniqueId extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bsection_unique_id',
+    "BSection and BWidget require a unique 'id' attribute.",
+    correction: "Provide a unique 'id' string parameter.",
+  );
+
+  BSectionUniqueId()
+    : super(
+        name: 'blogger_theme_bsection_unique_id',
+        description:
+            'Blogger layout engines require every BSection and BWidget to have a distinct id.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addCompilationUnit(
+      this,
+      _BSectionUniqueIdVisitor(this, context),
+    );
+  }
+}
+
+class _BSectionUniqueIdVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BSectionUniqueIdVisitor(this.rule, this.context);
+
+  @override
+  void visitCompilationUnit(CompilationUnit node) {
+    final seenIds = <String, InstanceCreationExpression>{};
+    node.accept(_BSectionFinder((creation, idArg) {
+      if (idArg == null) {
+        rule.reportAtNode(creation.constructorName);
+        return;
+      }
+      final idValue = idArg.argumentExpression.toSource();
+      if (seenIds.containsKey(idValue)) {
+        rule.reportAtNode(idArg);
+      } else {
+        seenIds[idValue] = creation;
+      }
+    }));
+  }
+}
+
+class _BSectionFinder extends RecursiveAstVisitor<void> {
+  final void Function(InstanceCreationExpression creation, NamedArgument? idArg) callback;
+
+  _BSectionFinder(this.callback);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (isBloggerThemeCreation(node, 'BSection') ||
+        isBloggerThemeCreation(node, 'BWidget')) {
+      callback(node, namedArgument(node, 'id'));
+    }
+    super.visitInstanceCreationExpression(node);
+  }
+}
+
+/// `BWidget` requires a `type` attribute.
+class BWidgetTypeRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bwidget_type_required',
+    "BWidget requires a 'type' attribute (e.g., 'Header', 'Blog', 'HTML').",
+    correction: "Add 'type: \"Blog\"' or appropriate widget type.",
+  );
+
+  BWidgetTypeRequired()
+    : super(
+        name: 'blogger_theme_bwidget_type_required',
+        description:
+            'Blogger widgets must specify a type for proper template rendering.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BWidgetTypeVisitor(this, context),
+    );
+  }
+}
+
+class _BWidgetTypeVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BWidgetTypeVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BWidget')) return;
+    if (namedArgument(node, 'type') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BLoop` requires both `values` and `varName` attributes.
+class BLoopRequiredArgs extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bloop_required_args',
+    "BLoop requires both 'values' and 'varName' attributes.",
+    correction: "Add missing 'values:' or 'varName:' parameter.",
+  );
+
+  BLoopRequiredArgs()
+    : super(
+        name: 'blogger_theme_bloop_required_args',
+        description:
+            'BLoop renders <b:loop values="..." var="..."> so both attributes are required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BLoopArgsVisitor(this, context),
+    );
+  }
+}
+
+class _BLoopArgsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BLoopArgsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BLoop')) return;
+    final hasValues = namedArgument(node, 'values') != null;
+    final hasVar = namedArgument(node, 'varName') != null || namedArgument(node, 'var') != null;
+    if (!hasValues || !hasVar) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -408,6 +624,10 @@ List<AnalysisRule> get warningRules => [
   CustomPaintFiniteSize(),
   PositionedMustBeOutermost(),
   SnackBarActionNotWired(),
+  RawTextEscapeFalse(),
+  BSectionUniqueId(),
+  BWidgetTypeRequired(),
+  BLoopRequiredArgs(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

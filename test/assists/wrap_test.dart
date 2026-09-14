@@ -43,6 +43,12 @@ class Home extends StatelessWidget {
         'Wrap with Column',
         'Wrap with Row',
         'Wrap with Stack',
+        'Wrap with div',
+        'Wrap with BSection',
+        'Wrap with BIf',
+        'Wrap with BLoop',
+        'Wrap with BIncludable',
+        'Wrap with Fragment',
         'Wrap with Builder',
         'Wrap with FutureBuilder',
         'Wrap with StreamBuilder',
@@ -314,6 +320,38 @@ class Box extends StatelessWidget {
 ''';
     final out = await apply(code, 'child);', 'Wrap with Container');
     expect(out, contains('return Center(child: Container(child: child));'));
+  }
+
+  Future<void> test_wrapWithDivIsPositionalChildren() async {
+    final out = await apply(_screen, "Text('hi')", 'Wrap with div');
+    expect(
+      out,
+      contains('''
+    return Center(
+      child: div(
+        [
+          Text('hi'),
+        ],
+      ),
+    );
+'''),
+    );
+  }
+
+  Future<void> test_wrapWithBSectionHasLeadingId() async {
+    final out = await apply(_screen, "Text('hi')", 'Wrap with BSection');
+    expect(
+      out,
+      contains('''
+    return Center(
+      child: BSection(
+        id: 'section-id', children: [
+          Text('hi'),
+        ],
+      ),
+    );
+'''),
+    );
   }
 
   Future<void> test_selectionAcrossSiblingsWrapsThemTogether() async {
