@@ -1236,6 +1236,183 @@ class _BClientScriptContentVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `img(...)` helper requires an `alt` attribute for accessibility.
+class HtmlImgAltRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_html_img_alt_required',
+    "img(...) helper requires an 'alt' attribute for accessibility.",
+    correction: "Add 'alt:' key to the img attribute map.",
+  );
+
+  HtmlImgAltRequired()
+    : super(
+        name: 'blogger_theme_html_img_alt_required',
+        description:
+            'HTML img tags require an alt attribute for accessibility and valid markup.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addMethodInvocation(
+      this,
+      _HtmlImgAltVisitor(this, context),
+    );
+  }
+}
+
+class _HtmlImgAltVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _HtmlImgAltVisitor(this.rule, this.context);
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name != 'img') return;
+    bool hasAlt = false;
+    for (final arg in node.argumentList.arguments) {
+      if (arg is SetOrMapLiteral) {
+        for (final element in arg.elements) {
+          if (element is MapLiteralEntry) {
+            final keySrc = element.key.toSource();
+            if (keySrc.contains('alt') || keySrc.contains('expr:alt')) {
+              hasAlt = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!hasAlt) {
+      rule.reportAtNode(node.methodName);
+    }
+  }
+}
+
+/// `a(...)` helper requires an `href` or `expr:href` attribute.
+class HtmlAnchorHrefRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_html_anchor_href_required',
+    "a(...) helper requires an 'href' or 'expr:href' attribute.",
+    correction: "Add 'href:' or 'expr:href:' key to the a attribute map.",
+  );
+
+  HtmlAnchorHrefRequired()
+    : super(
+        name: 'blogger_theme_html_anchor_href_required',
+        description:
+            'HTML anchor tags require an href or expr:href attribute.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addMethodInvocation(
+      this,
+      _HtmlAnchorHrefVisitor(this, context),
+    );
+  }
+}
+
+class _HtmlAnchorHrefVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _HtmlAnchorHrefVisitor(this.rule, this.context);
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name != 'a') return;
+    bool hasHref = false;
+    for (final arg in node.argumentList.arguments) {
+      if (arg is SetOrMapLiteral) {
+        for (final element in arg.elements) {
+          if (element is MapLiteralEntry) {
+            final keySrc = element.key.toSource();
+            if (keySrc.contains('href') || keySrc.contains('expr:href')) {
+              hasHref = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!hasHref) {
+      rule.reportAtNode(node.methodName);
+    }
+  }
+}
+
+/// `form(...)` helper requires an `action` or `expr:action` attribute.
+class HtmlFormActionRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_html_form_action_required',
+    "form(...) helper requires an 'action' or 'expr:action' attribute.",
+    correction: "Add 'action:' or 'expr:action:' key to the form attribute map.",
+  );
+
+  HtmlFormActionRequired()
+    : super(
+        name: 'blogger_theme_html_form_action_required',
+        description:
+            'HTML form elements require an action or expr:action attribute.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addMethodInvocation(
+      this,
+      _HtmlFormActionVisitor(this, context),
+    );
+  }
+}
+
+class _HtmlFormActionVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _HtmlFormActionVisitor(this.rule, this.context);
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name != 'form') return;
+    bool hasAction = false;
+    for (final arg in node.argumentList.arguments) {
+      if (arg is SetOrMapLiteral) {
+        for (final element in arg.elements) {
+          if (element is MapLiteralEntry) {
+            final keySrc = element.key.toSource();
+            if (keySrc.contains('action') || keySrc.contains('expr:action')) {
+              hasAction = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (!hasAction) {
+      rule.reportAtNode(node.methodName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1262,6 +1439,9 @@ List<AnalysisRule> get warningRules => [
   BVariableRequiredArgs(),
   BIncludeNameRequired(),
   BClientScriptContentRequired(),
+  HtmlImgAltRequired(),
+  HtmlAnchorHrefRequired(),
+  HtmlFormActionRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

@@ -45,6 +45,7 @@ abstract class RuleTest extends AnalysisRuleTest {
     String code,
     String highlighted, {
     int occurrence = 1,
+    int? length,
   }) async {
     final source = _import + code;
     var offset = -1;
@@ -52,7 +53,7 @@ abstract class RuleTest extends AnalysisRuleTest {
       offset = source.indexOf(highlighted, offset + 1);
     }
     expect(offset, greaterThanOrEqualTo(0), reason: 'highlight not found');
-    await assertDiagnostics(source, [lint(offset, highlighted.length)]);
+    await assertDiagnostics(source, [lint(offset, length ?? highlighted.length)]);
   }
 
   /// Asserts that [code] (without the import line) reports nothing.

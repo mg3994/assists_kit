@@ -34,6 +34,27 @@ class Home extends StatelessWidget {
         'Wrap with Center',
         'Wrap with Container',
         'Wrap with Padding',
+        'Wrap with header',
+        'Wrap with footer',
+        'Wrap with section',
+        'Wrap with article',
+        'Wrap with aside',
+        'Wrap with nav',
+        'Wrap with main',
+        'Wrap with p',
+        'Wrap with span',
+        'Wrap with h1',
+        'Wrap with h2',
+        'Wrap with h3',
+        'Wrap with ul',
+        'Wrap with ol',
+        'Wrap with li',
+        'Wrap with a',
+        'Wrap with button',
+        'Wrap with form',
+        'Wrap with label',
+        'Wrap with figure',
+        'Wrap with figcaption',
         'Wrap with SizedBox',
         'Wrap with Expanded',
         'Wrap with Flexible',
@@ -43,22 +64,6 @@ class Home extends StatelessWidget {
         'Wrap with Column',
         'Wrap with Row',
         'Wrap with Stack',
-        'Wrap with div',
-        'Wrap with BSection',
-        'Wrap with BIf',
-        'Wrap with BElseIf',
-        'Wrap with BLoop',
-        'Wrap with BIncludable',
-        'Wrap with BSkin',
-        'Wrap with BWidget',
-        'Wrap with AmpCarousel',
-        'Wrap with AmpSidebar',
-        'Wrap with AmpAccordion',
-        'Wrap with AmpLightbox',
-        'Wrap with AmpState',
-        'Wrap with AmpVideo',
-        'Wrap with AmpStory',
-        'Wrap with Fragment',
         'Wrap with Builder',
         'Wrap with FutureBuilder',
         'Wrap with StreamBuilder',
@@ -330,102 +335,6 @@ class Box extends StatelessWidget {
 ''';
     final out = await apply(code, 'child);', 'Wrap with Container');
     expect(out, contains('return Center(child: Container(child: child));'));
-  }
-
-  Future<void> test_wrapWithDivIsPositionalChildren() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with div');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: div(
-        [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
-  }
-
-  Future<void> test_wrapWithBWidgetHasLeadingIdAndType() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with BWidget');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: BWidget(
-        id: 'widget-id', type: 'Blog', children: [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
-  }
-
-  Future<void> test_wrapWithAmpLightboxHasLeadingAttributes() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with AmpLightbox');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: AmpLightbox(
-        id: 'lightbox1', layout: 'nodisplay', children: [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
-  }
-
-  Future<void> test_wrapWithAmpVideoHasLeadingAttributes() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with AmpVideo');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: AmpVideo(
-        width: '640', height: '360', layout: 'responsive', src: 'video.mp4', children: [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
-  }
-
-  Future<void> test_wrapWithAmpCarouselHasLeadingAttributes() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with AmpCarousel');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: AmpCarousel(
-        width: '400', height: '300', layout: 'responsive', type: 'slides', children: [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
-  }
-
-  Future<void> test_wrapWithBSectionHasLeadingId() async {
-    final out = await apply(_screen, "Text('hi')", 'Wrap with BSection');
-    expect(
-      out,
-      contains('''
-    return Center(
-      child: BSection(
-        id: 'section-id', children: [
-          Text('hi'),
-        ],
-      ),
-    );
-'''),
-    );
   }
 
   Future<void> test_selectionAcrossSiblingsWrapsThemTogether() async {

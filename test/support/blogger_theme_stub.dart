@@ -253,5 +253,26 @@ class AmpStory extends Component {
 }
 
 DomComponent div([dynamic arg1, dynamic arg2]) => DomComponent('div');
+DomComponent header([dynamic arg1, dynamic arg2]) => DomComponent('header');
+DomComponent footer([dynamic arg1, dynamic arg2]) => DomComponent('footer');
+DomComponent section([dynamic arg1, dynamic arg2]) => DomComponent('section');
+DomComponent article([dynamic arg1, dynamic arg2]) => DomComponent('article');
+DomComponent aside([dynamic arg1, dynamic arg2]) => DomComponent('aside');
+DomComponent nav([dynamic arg1, dynamic arg2]) => DomComponent('nav');
+DomComponent main([dynamic arg1, dynamic arg2]) => DomComponent('main');
+DomComponent p([dynamic arg1, dynamic arg2]) => DomComponent('p');
+DomComponent span([dynamic arg1, dynamic arg2]) => DomComponent('span');
 DomComponent h1([dynamic arg1, dynamic arg2]) => DomComponent('h1');
+DomComponent h2([dynamic arg1, dynamic arg2]) => DomComponent('h2');
+DomComponent h3([dynamic arg1, dynamic arg2]) => DomComponent('h3');
+DomComponent ul([dynamic arg1, dynamic arg2]) => DomComponent('ul');
+DomComponent ol([dynamic arg1, dynamic arg2]) => DomComponent('ol');
+DomComponent li([dynamic arg1, dynamic arg2]) => DomComponent('li');
+DomComponent a([dynamic arg1, dynamic arg2]) => DomComponent('a');
+DomComponent img([dynamic arg1, dynamic arg2]) => DomComponent('img');
+DomComponent button([dynamic arg1, dynamic arg2]) => DomComponent('button');
+DomComponent form([dynamic arg1, dynamic arg2]) => DomComponent('form');
+DomComponent label([dynamic arg1, dynamic arg2]) => DomComponent('label');
+DomComponent figure([dynamic arg1, dynamic arg2]) => DomComponent('figure');
+DomComponent figcaption([dynamic arg1, dynamic arg2]) => DomComponent('figcaption');
 ''';

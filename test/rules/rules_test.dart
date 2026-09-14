@@ -32,6 +32,9 @@ void main() {
     defineReflectiveTests(BVariableRequiredArgsTest);
     defineReflectiveTests(BIncludeNameRequiredTest);
     defineReflectiveTests(BClientScriptContentRequiredTest);
+    defineReflectiveTests(HtmlImgAltRequiredTest);
+    defineReflectiveTests(HtmlAnchorHrefRequiredTest);
+    defineReflectiveTests(HtmlFormActionRequiredTest);
   });
 }
 
@@ -517,5 +520,60 @@ class BClientScriptContentRequiredTest extends RuleTest {
 
   Future<void> test_quietWithScriptContent() => assertClean(
     "Component build() => BClientScript('console.log(1)');",
+  );
+}
+
+@reflectiveTest
+class HtmlImgAltRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = HtmlImgAltRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingAlt() => assertWarning(
+    "Component build() => img({'src': 'pic.png'});",
+    'img',
+  );
+
+  Future<void> test_quietWithAlt() => assertClean(
+    "Component build() => img({'src': 'pic.png', 'alt': 'picture'});",
+  );
+}
+
+@reflectiveTest
+class HtmlAnchorHrefRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = HtmlAnchorHrefRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingHref() => assertWarning(
+    "Component build() => a({'class': 'link'}, [BloggerText('click')]);",
+    'a(',
+    length: 1,
+  );
+
+  Future<void> test_quietWithHref() => assertClean(
+    "Component build() => a({'href': '/home'}, [BloggerText('click')]);",
+  );
+}
+
+@reflectiveTest
+class HtmlFormActionRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = HtmlFormActionRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingAction() => assertWarning(
+    "Component build() => form({'method': 'post'}, []);",
+    'form',
+  );
+
+  Future<void> test_quietWithAction() => assertClean(
+    "Component build() => form({'action': '/search'}, []);",
   );
 }
