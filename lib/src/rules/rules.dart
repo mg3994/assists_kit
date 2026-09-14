@@ -615,6 +615,144 @@ class _BLoopArgsVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `AmpImg` requires both `width` and `height` attributes for AMP layout calculation.
+class AmpImgDimensionsRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_img_dimensions_required',
+    "AmpImg requires both 'width' and 'height' attributes for AMP compliance.",
+    correction: "Add missing 'width' or 'height' parameter.",
+  );
+
+  AmpImgDimensionsRequired()
+    : super(
+        name: 'blogger_theme_amp_img_dimensions_required',
+        description:
+            'AMP requires explicit width and height attributes on amp-img elements.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpImgDimensionsVisitor(this, context),
+    );
+  }
+}
+
+class _AmpImgDimensionsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpImgDimensionsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpImg')) return;
+    final hasWidth = namedArgument(node, 'width') != null;
+    final hasHeight = namedArgument(node, 'height') != null;
+    if (!hasWidth || !hasHeight) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BEval` requires `expr` attribute.
+class BEvalExprRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_beval_expr_required',
+    "BEval requires an 'expr' attribute.",
+    correction: "Provide a non-empty 'expr:' argument.",
+  );
+
+  BEvalExprRequired()
+    : super(
+        name: 'blogger_theme_beval_expr_required',
+        description:
+            'BEval renders <b:eval expr="..."/> so the expr attribute is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BEvalExprVisitor(this, context),
+    );
+  }
+}
+
+class _BEvalExprVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BEvalExprVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BEval')) return;
+    final exprArg = namedArgument(node, 'expr');
+    if (exprArg == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BIncludable` requires `id` attribute.
+class BIncludableIdRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bincludable_id_required',
+    "BIncludable requires an 'id' attribute.",
+    correction: "Provide an 'id:' argument for BIncludable.",
+  );
+
+  BIncludableIdRequired()
+    : super(
+        name: 'blogger_theme_bincludable_id_required',
+        description:
+            'BIncludable defines reusable template macros so the id attribute is required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BIncludableIdVisitor(this, context),
+    );
+  }
+}
+
+class _BIncludableIdVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BIncludableIdVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BIncludable')) return;
+    if (namedArgument(node, 'id') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -628,6 +766,9 @@ List<AnalysisRule> get warningRules => [
   BSectionUniqueId(),
   BWidgetTypeRequired(),
   BLoopRequiredArgs(),
+  AmpImgDimensionsRequired(),
+  BEvalExprRequired(),
+  BIncludableIdRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

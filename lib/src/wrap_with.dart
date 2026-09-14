@@ -105,6 +105,25 @@ const _wrappers = [
     WrapSlot.children,
     leading: "id: 'includable-id', ",
   ),
+  Wrapper(
+    'bWidget',
+    'BWidget',
+    WrapSlot.children,
+    leading: "id: 'widget-id', type: 'Blog', ",
+  ),
+  Wrapper(
+    'ampCarousel',
+    'AmpCarousel',
+    WrapSlot.children,
+    leading: "width: '400', height: '300', layout: 'responsive', type: 'slides', ",
+  ),
+  Wrapper(
+    'ampSidebar',
+    'AmpSidebar',
+    WrapSlot.children,
+    leading: "id: 'sidebar1', layout: 'nodisplay', ",
+  ),
+  Wrapper('ampAccordion', 'AmpAccordion', WrapSlot.children),
   Wrapper('fragment', 'Fragment', WrapSlot.children, isPositionalChildren: true),
   Wrapper('builder', 'Builder', WrapSlot.builder),
   Wrapper(

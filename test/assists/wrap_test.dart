@@ -48,6 +48,10 @@ class Home extends StatelessWidget {
         'Wrap with BIf',
         'Wrap with BLoop',
         'Wrap with BIncludable',
+        'Wrap with BWidget',
+        'Wrap with AmpCarousel',
+        'Wrap with AmpSidebar',
+        'Wrap with AmpAccordion',
         'Wrap with Fragment',
         'Wrap with Builder',
         'Wrap with FutureBuilder',
@@ -330,6 +334,38 @@ class Box extends StatelessWidget {
     return Center(
       child: div(
         [
+          Text('hi'),
+        ],
+      ),
+    );
+'''),
+    );
+  }
+
+  Future<void> test_wrapWithBWidgetHasLeadingIdAndType() async {
+    final out = await apply(_screen, "Text('hi')", 'Wrap with BWidget');
+    expect(
+      out,
+      contains('''
+    return Center(
+      child: BWidget(
+        id: 'widget-id', type: 'Blog', children: [
+          Text('hi'),
+        ],
+      ),
+    );
+'''),
+    );
+  }
+
+  Future<void> test_wrapWithAmpCarouselHasLeadingAttributes() async {
+    final out = await apply(_screen, "Text('hi')", 'Wrap with AmpCarousel');
+    expect(
+      out,
+      contains('''
+    return Center(
+      child: AmpCarousel(
+        width: '400', height: '300', layout: 'responsive', type: 'slides', children: [
           Text('hi'),
         ],
       ),

@@ -88,6 +88,47 @@ class BIncludable extends Component {
   const BIncludable({this.id, this.children = const []});
 }
 
+class BEval extends Component {
+  final String? expr;
+  const BEval({this.expr});
+}
+
+class AmpImg extends Component {
+  final String? src;
+  final String? width;
+  final String? height;
+  final String? layout;
+  final String? alt;
+  const AmpImg({this.src, this.width, this.height, this.layout, this.alt});
+}
+
+class AmpCarousel extends Component {
+  final String? width;
+  final String? height;
+  final String? layout;
+  final String? type;
+  final List<Component> children;
+  const AmpCarousel({
+    this.width,
+    this.height,
+    this.layout,
+    this.type,
+    this.children = const [],
+  });
+}
+
+class AmpSidebar extends Component {
+  final String? id;
+  final String? layout;
+  final List<Component> children;
+  const AmpSidebar({this.id, this.layout, this.children = const []});
+}
+
+class AmpAccordion extends Component {
+  final List<Component> children;
+  const AmpAccordion({this.children = const []});
+}
+
 DomComponent div([dynamic arg1, dynamic arg2]) => DomComponent('div');
 DomComponent h1([dynamic arg1, dynamic arg2]) => DomComponent('h1');
 ''';

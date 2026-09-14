@@ -19,6 +19,9 @@ void main() {
     defineReflectiveTests(BSectionUniqueIdTest);
     defineReflectiveTests(BWidgetTypeRequiredTest);
     defineReflectiveTests(BLoopRequiredArgsTest);
+    defineReflectiveTests(AmpImgDimensionsRequiredTest);
+    defineReflectiveTests(BEvalExprRequiredTest);
+    defineReflectiveTests(BIncludableIdRequiredTest);
   });
 }
 
@@ -270,5 +273,59 @@ class BLoopRequiredArgsTest extends RuleTest {
 
   Future<void> test_quietWithValuesAndVarName() => assertClean(
     "Component build() => BLoop(values: 'data:posts', varName: 'post');",
+  );
+}
+
+@reflectiveTest
+class AmpImgDimensionsRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpImgDimensionsRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingWidthOrHeight() => assertWarning(
+    "Component build() => AmpImg(src: 'img.jpg', width: '100');",
+    'AmpImg',
+  );
+
+  Future<void> test_quietWithWidthAndHeight() => assertClean(
+    "Component build() => AmpImg(src: 'img.jpg', width: '100', height: '100');",
+  );
+}
+
+@reflectiveTest
+class BEvalExprRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BEvalExprRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingExpr() => assertWarning(
+    'Component build() => BEval();',
+    'BEval',
+  );
+
+  Future<void> test_quietWithExpr() => assertClean(
+    "Component build() => BEval(expr: 'data:blog.title');",
+  );
+}
+
+@reflectiveTest
+class BIncludableIdRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BIncludableIdRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingId() => assertWarning(
+    'Component build() => BIncludable();',
+    'BIncludable',
+  );
+
+  Future<void> test_quietWithId() => assertClean(
+    "Component build() => BIncludable(id: 'main');",
   );
 }
