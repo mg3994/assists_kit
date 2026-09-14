@@ -102,6 +102,8 @@ const _wrappers = [
   Wrapper('label', 'label', WrapSlot.children, isPositionalChildren: true),
   Wrapper('figure', 'figure', WrapSlot.children, isPositionalChildren: true),
   Wrapper('figcaption', 'figcaption', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('table', 'table', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('tr', 'tr', WrapSlot.children, isPositionalChildren: true),
   Wrapper(
     'bSection',
     'BSection',
@@ -177,6 +179,24 @@ const _wrappers = [
     'AmpVideo',
     WrapSlot.children,
     leading: "width: '640', height: '360', layout: 'responsive', src: 'video.mp4', ",
+  ),
+  Wrapper(
+    'ampList',
+    'AmpList',
+    WrapSlot.children,
+    leading: "width: 'auto', height: '100', layout: 'fixed-height', src: 'data.json', ",
+  ),
+  Wrapper(
+    'ampStoryPage',
+    'AmpStoryPage',
+    WrapSlot.children,
+    leading: "id: 'page1', ",
+  ),
+  Wrapper(
+    'ampStoryGridLayer',
+    'AmpStoryGridLayer',
+    WrapSlot.children,
+    leading: "template: 'fill', ",
   ),
   Wrapper(
     'ampStory',

@@ -1413,6 +1413,141 @@ class _HtmlFormActionVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `AmpIframe` requires a `sandbox` attribute.
+class AmpIframeSandboxRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_iframe_sandbox_required',
+    "AmpIframe requires a 'sandbox' attribute for AMP security validation.",
+    correction: "Add 'sandbox:' parameter (e.g. 'allow-scripts allow-same-origin').",
+  );
+
+  AmpIframeSandboxRequired()
+    : super(
+        name: 'blogger_theme_amp_iframe_sandbox_required',
+        description:
+            'AMP requires explicit sandbox attributes on amp-iframe elements.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpIframeSandboxVisitor(this, context),
+    );
+  }
+}
+
+class _AmpIframeSandboxVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpIframeSandboxVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpIframe')) return;
+    if (namedArgument(node, 'sandbox') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpSocialShare` requires a `type` attribute.
+class AmpSocialShareTypeRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_social_share_type_required',
+    "AmpSocialShare requires a 'type' attribute (e.g. 'twitter', 'facebook', 'linkedin').",
+    correction: "Provide a 'type:' parameter for AmpSocialShare.",
+  );
+
+  AmpSocialShareTypeRequired()
+    : super(
+        name: 'blogger_theme_amp_social_share_type_required',
+        description:
+            'AmpSocialShare specifies the target provider via the type attribute.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpSocialShareTypeVisitor(this, context),
+    );
+  }
+}
+
+class _AmpSocialShareTypeVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpSocialShareTypeVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpSocialShare')) return;
+    if (namedArgument(node, 'type') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpList` requires a `src` attribute.
+class AmpListSrcRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_list_src_required',
+    "AmpList requires a 'src' attribute pointing to dynamic JSON data.",
+    correction: "Provide a 'src:' parameter with the JSON endpoint URL.",
+  );
+
+  AmpListSrcRequired()
+    : super(
+        name: 'blogger_theme_amp_list_src_required',
+        description:
+            'AmpList fetches dynamic content from a JSON endpoint so src is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpListSrcVisitor(this, context),
+    );
+  }
+}
+
+class _AmpListSrcVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpListSrcVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpList')) return;
+    if (namedArgument(node, 'src') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1442,6 +1577,9 @@ List<AnalysisRule> get warningRules => [
   HtmlImgAltRequired(),
   HtmlAnchorHrefRequired(),
   HtmlFormActionRequired(),
+  AmpIframeSandboxRequired(),
+  AmpSocialShareTypeRequired(),
+  AmpListSrcRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

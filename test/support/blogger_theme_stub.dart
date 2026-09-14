@@ -50,6 +50,43 @@ class BSection extends Component {
   });
 }
 
+class AmpIframe extends Component {
+  final String? sandbox;
+  const AmpIframe({this.sandbox});
+}
+
+class AmpSocialShare extends Component {
+  final String? type;
+  const AmpSocialShare({this.type});
+}
+
+class AmpList extends Component {
+  final String? src;
+  final String? width;
+  final String? height;
+  final String? layout;
+  final List<Component> children;
+  const AmpList({
+    this.src,
+    this.width,
+    this.height,
+    this.layout,
+    this.children = const [],
+  });
+}
+
+class AmpStoryPage extends Component {
+  final String? id;
+  final List<Component> children;
+  const AmpStoryPage({this.id, this.children = const []});
+}
+
+class AmpStoryGridLayer extends Component {
+  final String? template;
+  final List<Component> children;
+  const AmpStoryGridLayer({this.template, this.children = const []});
+}
+
 class AmpInstagram extends Component {
   final String? shortcode;
   final String? dataShortcode;
@@ -275,4 +312,6 @@ DomComponent form([dynamic arg1, dynamic arg2]) => DomComponent('form');
 DomComponent label([dynamic arg1, dynamic arg2]) => DomComponent('label');
 DomComponent figure([dynamic arg1, dynamic arg2]) => DomComponent('figure');
 DomComponent figcaption([dynamic arg1, dynamic arg2]) => DomComponent('figcaption');
+DomComponent table([dynamic arg1, dynamic arg2]) => DomComponent('table');
+DomComponent tr([dynamic arg1, dynamic arg2]) => DomComponent('tr');
 ''';

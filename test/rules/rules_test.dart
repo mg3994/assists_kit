@@ -35,6 +35,9 @@ void main() {
     defineReflectiveTests(HtmlImgAltRequiredTest);
     defineReflectiveTests(HtmlAnchorHrefRequiredTest);
     defineReflectiveTests(HtmlFormActionRequiredTest);
+    defineReflectiveTests(AmpIframeSandboxRequiredTest);
+    defineReflectiveTests(AmpSocialShareTypeRequiredTest);
+    defineReflectiveTests(AmpListSrcRequiredTest);
   });
 }
 
@@ -575,5 +578,59 @@ class HtmlFormActionRequiredTest extends RuleTest {
 
   Future<void> test_quietWithAction() => assertClean(
     "Component build() => form({'action': '/search'}, []);",
+  );
+}
+
+@reflectiveTest
+class AmpIframeSandboxRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpIframeSandboxRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingSandbox() => assertWarning(
+    'Component build() => AmpIframe();',
+    'AmpIframe',
+  );
+
+  Future<void> test_quietWithSandbox() => assertClean(
+    "Component build() => AmpIframe(sandbox: 'allow-scripts');",
+  );
+}
+
+@reflectiveTest
+class AmpSocialShareTypeRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpSocialShareTypeRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingType() => assertWarning(
+    'Component build() => AmpSocialShare();',
+    'AmpSocialShare',
+  );
+
+  Future<void> test_quietWithType() => assertClean(
+    "Component build() => AmpSocialShare(type: 'twitter');",
+  );
+}
+
+@reflectiveTest
+class AmpListSrcRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpListSrcRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingSrc() => assertWarning(
+    'Component build() => AmpList();',
+    'AmpList',
+  );
+
+  Future<void> test_quietWithSrc() => assertClean(
+    "Component build() => AmpList(src: 'data.json');",
   );
 }
