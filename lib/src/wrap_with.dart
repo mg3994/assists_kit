@@ -43,7 +43,17 @@ class Wrapper {
   /// nothing inside one, where the keyword would be redundant.
   final String leading;
 
-  const Wrapper(this.id, this.name, this.slot, {this.leading = ''});
+  /// Whether the list of children is passed as a positional argument `[...]`
+  /// rather than a named `children: [...]` argument.
+  final bool isPositionalChildren;
+
+  const Wrapper(
+    this.id,
+    this.name,
+    this.slot, {
+    this.leading = '',
+    this.isPositionalChildren = false,
+  });
 
   /// Whether the slot takes a closure, which can never be part of a
   /// constant expression.
@@ -69,6 +79,165 @@ const _wrappers = [
   Wrapper('column', 'Column', WrapSlot.children),
   Wrapper('row', 'Row', WrapSlot.children),
   Wrapper('stack', 'Stack', WrapSlot.children),
+  // Blogger & HTML component wrappers
+  Wrapper('div', 'div', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('header', 'header', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('footer', 'footer', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('section', 'section', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('article', 'article', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('aside', 'aside', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('nav', 'nav', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('main', 'main', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('p', 'p', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('span', 'span', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('h1', 'h1', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('h2', 'h2', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('h3', 'h3', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('ul', 'ul', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('ol', 'ol', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('li', 'li', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('a', 'a', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('button', 'button', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('form', 'form', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('label', 'label', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('figure', 'figure', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('figcaption', 'figcaption', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('table', 'table', WrapSlot.children, isPositionalChildren: true),
+  Wrapper('tr', 'tr', WrapSlot.children, isPositionalChildren: true),
+  Wrapper(
+    'bSection',
+    'BSection',
+    WrapSlot.children,
+    leading: "id: 'section-id', ",
+  ),
+  Wrapper(
+    'bIf',
+    'BIf',
+    WrapSlot.children,
+    leading: "'cond', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bElseIf',
+    'BElseIf',
+    WrapSlot.children,
+    leading: "'cond', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bLoop',
+    'BLoop',
+    WrapSlot.children,
+    leading: "values: 'data:posts', varName: 'post', ",
+  ),
+  Wrapper(
+    'bIncludable',
+    'BIncludable',
+    WrapSlot.children,
+    leading: "id: 'includable-id', ",
+  ),
+  Wrapper(
+    'bArg',
+    'BArg',
+    WrapSlot.children,
+    leading: "name: 'argName', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bData',
+    'BData',
+    WrapSlot.children,
+    leading: "expr: 'data:blog.title', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bSkin',
+    'BSkin',
+    WrapSlot.children,
+    leading: "'', variables: ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bWidget',
+    'BWidget',
+    WrapSlot.children,
+    leading: "id: 'widget-id', type: 'Blog', ",
+  ),
+  Wrapper(
+    'ampCarousel',
+    'AmpCarousel',
+    WrapSlot.children,
+    leading: "width: '400', height: '300', layout: 'responsive', type: 'slides', ",
+  ),
+  Wrapper(
+    'ampSidebar',
+    'AmpSidebar',
+    WrapSlot.children,
+    leading: "id: 'sidebar1', layout: 'nodisplay', ",
+  ),
+  Wrapper('ampAccordion', 'AmpAccordion', WrapSlot.children),
+  Wrapper(
+    'ampLightbox',
+    'AmpLightbox',
+    WrapSlot.children,
+    leading: "id: 'lightbox1', layout: 'nodisplay', ",
+  ),
+  Wrapper(
+    'ampState',
+    'AmpState',
+    WrapSlot.children,
+    leading: "id: 'myState', ",
+  ),
+  Wrapper(
+    'ampVideo',
+    'AmpVideo',
+    WrapSlot.children,
+    leading: "width: '640', height: '360', layout: 'responsive', src: 'video.mp4', ",
+  ),
+  Wrapper(
+    'ampList',
+    'AmpList',
+    WrapSlot.children,
+    leading: "width: 'auto', height: '100', layout: 'fixed-height', src: 'data.json', ",
+  ),
+  Wrapper(
+    'ampStoryPage',
+    'AmpStoryPage',
+    WrapSlot.children,
+    leading: "id: 'page1', ",
+  ),
+  Wrapper(
+    'ampStoryGridLayer',
+    'AmpStoryGridLayer',
+    WrapSlot.children,
+    leading: "template: 'fill', ",
+  ),
+  Wrapper(
+    'ampStory',
+    'AmpStory',
+    WrapSlot.children,
+    leading: "title: 'Story Title', publisher: 'Publisher Name', publisherLogoSrc: 'logo.png', posterPortraitSrc: 'poster.jpg', ",
+  ),
+  Wrapper(
+    'ampFitText',
+    'AmpFitText',
+    WrapSlot.children,
+    leading: "width: '300', height: '200', ",
+  ),
+  Wrapper(
+    'ampAnalytics',
+    'AmpAnalytics',
+    WrapSlot.children,
+    leading: "type: 'googleanalytics', ",
+  ),
+  Wrapper(
+    'ampConsent',
+    'AmpConsent',
+    WrapSlot.children,
+    leading: "id: 'consent1', ",
+  ),
+  Wrapper('ampSelector', 'AmpSelector', WrapSlot.children),
+  Wrapper('fragment', 'Fragment', WrapSlot.children, isPositionalChildren: true),
   Wrapper('builder', 'Builder', WrapSlot.builder),
   Wrapper(
     'futureBuilder',
@@ -177,9 +346,10 @@ class WrapWith extends ResolvedCorrectionProducer {
       for (final sibling in siblings)
         reindentContinuationLines(utils.getNodeText(sibling), one * 2),
     ].join(',$eol$indent$one$one');
+    final childrenLabel = _wrapper.isPositionalChildren ? '' : 'children: ';
     final text =
         '${_wrapper.name}($eol'
-        '$indent${one}children: [$eol'
+        '$indent$one$childrenLabel[$eol'
         '$indent$one$one$items,$eol'
         '$indent$one],$eol'
         '$indent)';
@@ -279,8 +449,9 @@ String wrapText(Expression creation, Wrapper wrapper, CorrectionUtils utils) {
   final one = utils.oneIndent;
   final indent = lineIndent(utils.getText(0, creation.offset), creation.offset);
   if (wrapper.slot == WrapSlot.children) {
+    final childrenLabel = wrapper.isPositionalChildren ? '' : 'children: ';
     return '$name($eol'
-        '$indent$one${leading}children: [$eol'
+        '$indent$one$leading$childrenLabel[$eol'
         '$indent$one$one${reindentContinuationLines(source, one * 2)},$eol'
         '$indent$one],$eol'
         '$indent)';

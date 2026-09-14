@@ -29,6 +29,7 @@ import 'src/convert_to_stateless.dart';
 import 'src/move_widget.dart';
 import 'src/remove_widget.dart';
 import 'src/rules/add_controller_mirror.dart';
+import 'src/rules/add_escape_false.dart';
 import 'src/rules/rules.dart';
 import 'src/swap_with_child.dart';
 import 'src/wrap_with.dart';
@@ -74,6 +75,10 @@ class AssistsKitPlugin extends Plugin {
     registry.registerFixForRule(
       MirrorTextController.code,
       AddControllerMirror.new,
+    );
+    registry.registerFixForRule(
+      RawTextEscapeFalse.code,
+      AddEscapeFalse.new,
     );
   }
 }

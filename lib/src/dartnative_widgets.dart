@@ -10,6 +10,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 
 const _dartnativeUriPrefix = 'package:dartnative/';
+const _bloggerThemeUriPrefix = 'package:blogger_theme/';
 
 /// Whether [element] is declared in the `dartnative` package.
 bool isDartNativeElement(Element? element) {
@@ -17,9 +18,19 @@ bool isDartNativeElement(Element? element) {
   return uri != null && uri.startsWith(_dartnativeUriPrefix);
 }
 
+/// Whether [element] is declared in the `blogger_theme` package.
+bool isBloggerThemeElement(Element? element) {
+  final uri = element?.library?.uri.toString();
+  return uri != null && uri.startsWith(_bloggerThemeUriPrefix);
+}
+
 /// Whether [element] is exactly DartNative's class called [name].
 bool isDartNativeClass(InterfaceElement? element, String name) =>
     element != null && element.name == name && isDartNativeElement(element);
+
+/// Whether [element] is exactly blogger_theme's class called [name].
+bool isBloggerThemeClass(InterfaceElement? element, String name) =>
+    element != null && element.name == name && isBloggerThemeElement(element);
 
 /// Whether [element] is, or extends, DartNative's class called [name].
 bool isOrExtendsDartNative(InterfaceElement? element, String name) {
@@ -31,17 +42,40 @@ bool isOrExtendsDartNative(InterfaceElement? element, String name) {
   return false;
 }
 
-/// Whether [type] is a DartNative `Widget` (or subtype).
-bool isWidgetType(DartType? type) =>
-    type is InterfaceType && isOrExtendsDartNative(type.element, 'Widget');
+/// Whether [element] is, or extends, blogger_theme's class called [name].
+bool isOrExtendsBloggerTheme(InterfaceElement? element, String name) {
+  if (element == null) return false;
+  if (isBloggerThemeClass(element, name)) return true;
+  for (final supertype in element.allSupertypes) {
+    if (isBloggerThemeClass(supertype.element, name)) return true;
+  }
+  return false;
+}
+
+/// Whether [type] is a DartNative `Widget` or blogger_theme `Component` (or subtype).
+bool isWidgetType(DartType? type) {
+  if (type is! InterfaceType) return false;
+  final element = type.element;
+  return isOrExtendsDartNative(element, 'Widget') ||
+      isOrExtendsBloggerTheme(element, 'Component') ||
+      isOrExtendsBloggerTheme(element, 'DomComponent');
+}
 
 /// Whether [type] is exactly DartNative's class called [name].
 bool isExactlyDartNativeType(DartType? type, String name) =>
     type is InterfaceType && isDartNativeClass(type.element, name);
 
+/// Whether [type] is exactly blogger_theme's class called [name].
+bool isExactlyBloggerThemeType(DartType? type, String name) =>
+    type is InterfaceType && isBloggerThemeClass(type.element, name);
+
 /// Whether [creation] instantiates exactly DartNative's class called [name].
 bool isDartNativeCreation(InstanceCreationExpression creation, String name) =>
     isExactlyDartNativeType(creation.staticType, name);
+
+/// Whether [creation] instantiates exactly blogger_theme's class called [name].
+bool isBloggerThemeCreation(InstanceCreationExpression creation, String name) =>
+    isExactlyBloggerThemeType(creation.staticType, name);
 
 /// Whether [element] is DartNative's `State` class.
 bool isStateElement(InterfaceElement? element) =>
