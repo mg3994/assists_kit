@@ -947,6 +947,158 @@ class _BSkinCssVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `BElseIf` and `BElse` should only be placed inside `BIf` components.
+class BElseIfParentMustBeBIf extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_belseif_parent_must_be_bif',
+    "BElseIf and BElse should be placed inside a BIf component.",
+    correction: "Move BElseIf / BElse inside a BIf children list.",
+  );
+
+  BElseIfParentMustBeBIf()
+    : super(
+        name: 'blogger_theme_belseif_parent_must_be_bif',
+        description:
+            'BElseIf and BElse components render <b:elseif> and <b:else> tags which require an enclosing <b:if> block.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BElseIfParentVisitor(this, context),
+    );
+  }
+}
+
+class _BElseIfParentVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BElseIfParentVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BElseIf') &&
+        !isBloggerThemeCreation(node, 'BElse')) {
+      return;
+    }
+    AstNode? current = node.parent;
+    bool foundBIf = false;
+    while (current != null) {
+      if (current is InstanceCreationExpression &&
+          (isBloggerThemeCreation(current, 'BIf') ||
+           isBloggerThemeCreation(current, 'BElseIf'))) {
+        foundBIf = true;
+        break;
+      }
+      if (current is FunctionBody || current is Statement) break;
+      current = current.parent;
+    }
+    if (!foundBIf) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BAttr` requires a `name` parameter.
+class BAttrNameRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_battr_name_required',
+    "BAttr requires a 'name' attribute.",
+    correction: "Provide a 'name:' argument for BAttr.",
+  );
+
+  BAttrNameRequired()
+    : super(
+        name: 'blogger_theme_battr_name_required',
+        description:
+            'BAttr generates <b:attr name="..."> so the name parameter is required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BAttrNameVisitor(this, context),
+    );
+  }
+}
+
+class _BAttrNameVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BAttrNameVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BAttr')) return;
+    if (namedArgument(node, 'name') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BClass` requires either `name` or `exprName` parameter.
+class BClassExprOrNameRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bclass_expr_or_name_required',
+    "BClass requires either a 'name' or 'exprName' attribute.",
+    correction: "Add 'name:' or 'exprName:' parameter to BClass.",
+  );
+
+  BClassExprOrNameRequired()
+    : super(
+        name: 'blogger_theme_bclass_expr_or_name_required',
+        description:
+            'BClass generates <b:class name="..." expr:name="..."/> so at least one name attribute is required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BClassArgsVisitor(this, context),
+    );
+  }
+}
+
+class _BClassArgsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BClassArgsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BClass')) return;
+    final hasName = namedArgument(node, 'name') != null;
+    final hasExprName = namedArgument(node, 'exprName') != null;
+    if (!hasName && !hasExprName) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -967,6 +1119,9 @@ List<AnalysisRule> get warningRules => [
   AmpYoutubeVideoidRequired(),
   AmpSocialEmbedIdRequired(),
   BSkinEmptyCssAmpRule(),
+  BElseIfParentMustBeBIf(),
+  BAttrNameRequired(),
+  BClassExprOrNameRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

@@ -46,6 +46,7 @@ class Home extends StatelessWidget {
         'Wrap with div',
         'Wrap with BSection',
         'Wrap with BIf',
+        'Wrap with BElseIf',
         'Wrap with BLoop',
         'Wrap with BIncludable',
         'Wrap with BWidget',

@@ -99,6 +99,30 @@ class BIf extends Component {
   const BIf(this.cond, [this.children = const []]);
 }
 
+class BElseIf extends Component {
+  final String cond;
+  final List<Component> children;
+  const BElseIf(this.cond, [this.children = const []]);
+}
+
+class BElse extends Component {
+  final List<Component> children;
+  const BElse([this.children = const []]);
+}
+
+class BAttr extends Component {
+  final String? name;
+  final String? value;
+  final String? cond;
+  const BAttr({this.name, this.value, this.cond});
+}
+
+class BClass extends Component {
+  final String? name;
+  final String? exprName;
+  const BClass({this.name, this.exprName});
+}
+
 class BLoop extends Component {
   final String? values;
   final String? varName;

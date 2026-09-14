@@ -94,6 +94,13 @@ const _wrappers = [
     isPositionalChildren: true,
   ),
   Wrapper(
+    'bElseIf',
+    'BElseIf',
+    WrapSlot.children,
+    leading: "'cond', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
     'bLoop',
     'BLoop',
     WrapSlot.children,

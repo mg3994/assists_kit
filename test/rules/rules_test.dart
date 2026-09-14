@@ -26,6 +26,9 @@ void main() {
     defineReflectiveTests(AmpYoutubeVideoidRequiredTest);
     defineReflectiveTests(AmpSocialEmbedIdRequiredTest);
     defineReflectiveTests(BSkinEmptyCssAmpRuleTest);
+    defineReflectiveTests(BElseIfParentMustBeBIfTest);
+    defineReflectiveTests(BAttrNameRequiredTest);
+    defineReflectiveTests(BClassExprOrNameRequiredTest);
   });
 }
 
@@ -403,5 +406,59 @@ class BSkinEmptyCssAmpRuleTest extends RuleTest {
 
   Future<void> test_quietWithEmptyCss() => assertClean(
     "Component build() => BSkin('');",
+  );
+}
+
+@reflectiveTest
+class BElseIfParentMustBeBIfTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BElseIfParentMustBeBIf();
+    super.setUp();
+  }
+
+  Future<void> test_reportsBElseIfOutsideBIf() => assertWarning(
+    "Component build() => div([BElseIf('data:blog.isMobile')]);",
+    'BElseIf',
+  );
+
+  Future<void> test_quietBElseIfInsideBIf() => assertClean(
+    "Component build() => BIf('cond', [BElseIf('cond2')]);",
+  );
+}
+
+@reflectiveTest
+class BAttrNameRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BAttrNameRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingName() => assertWarning(
+    "Component build() => BAttr(value: 'val');",
+    'BAttr',
+  );
+
+  Future<void> test_quietWithName() => assertClean(
+    "Component build() => BAttr(name: 'class', value: 'val');",
+  );
+}
+
+@reflectiveTest
+class BClassExprOrNameRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BClassExprOrNameRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingNameAndExprName() => assertWarning(
+    'Component build() => BClass();',
+    'BClass',
+  );
+
+  Future<void> test_quietWithName() => assertClean(
+    "Component build() => BClass(name: 'active');",
   );
 }
