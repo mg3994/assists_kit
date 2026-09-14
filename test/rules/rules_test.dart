@@ -40,6 +40,8 @@ void main() {
     defineReflectiveTests(AmpListSrcRequiredTest);
     defineReflectiveTests(BSkinVariablesRequiredTest);
     defineReflectiveTests(BTagMissingNameTest);
+    defineReflectiveTests(BArgNameRequiredTest);
+    defineReflectiveTests(BDataExprRequiredTest);
   });
 }
 
@@ -670,5 +672,41 @@ class BTagMissingNameTest extends RuleTest {
 
   Future<void> test_quietWithName() => assertClean(
     "Component build() => BTag(name: 'script');",
+  );
+}
+
+@reflectiveTest
+class BArgNameRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BArgNameRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingName() => assertWarning(
+    'Component build() => BArg();',
+    'BArg',
+  );
+
+  Future<void> test_quietWithName() => assertClean(
+    "Component build() => BArg(name: 'arg1');",
+  );
+}
+
+@reflectiveTest
+class BDataExprRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BDataExprRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingExpr() => assertWarning(
+    'Component build() => BData();',
+    'BData',
+  );
+
+  Future<void> test_quietWithExpr() => assertClean(
+    "Component build() => BData(expr: 'data:blog.title');",
   );
 }

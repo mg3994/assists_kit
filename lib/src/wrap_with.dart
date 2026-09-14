@@ -137,6 +137,20 @@ const _wrappers = [
     leading: "id: 'includable-id', ",
   ),
   Wrapper(
+    'bArg',
+    'BArg',
+    WrapSlot.children,
+    leading: "name: 'argName', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
+    'bData',
+    'BData',
+    WrapSlot.children,
+    leading: "expr: 'data:blog.title', ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
     'bSkin',
     'BSkin',
     WrapSlot.children,

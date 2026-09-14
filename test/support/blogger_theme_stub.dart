@@ -186,6 +186,20 @@ class BClass extends Component {
   const BClass({this.name, this.exprName});
 }
 
+class BArg extends Component {
+  final String? name;
+  final String? value;
+  final List<Component> children;
+  const BArg({this.name, this.value, this.children = const []});
+}
+
+class BData extends Component {
+  final String? expr;
+  final String? name;
+  final List<Component> children;
+  const BData({this.expr, this.name, this.children = const []});
+}
+
 class BTag extends Component {
   final String? name;
   final List<Component> children;

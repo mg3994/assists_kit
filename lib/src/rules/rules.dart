@@ -1651,6 +1651,98 @@ class _BTagVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `BArg` requires a `name` attribute.
+class BArgNameRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_barg_name_required',
+    "BArg requires a 'name' attribute.",
+    correction: "Provide a 'name:' parameter for BArg.",
+  );
+
+  BArgNameRequired()
+    : super(
+        name: 'blogger_theme_barg_name_required',
+        description:
+            'BArg passes macro parameters to BInclude so the name attribute is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BArgNameVisitor(this, context),
+    );
+  }
+}
+
+class _BArgNameVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BArgNameVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BArg')) return;
+    if (namedArgument(node, 'name') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BData` requires an `expr` or `name` attribute.
+class BDataExprRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bdata_expr_required',
+    "BData requires an 'expr' or 'name' attribute.",
+    correction: "Add 'expr:' parameter to BData.",
+  );
+
+  BDataExprRequired()
+    : super(
+        name: 'blogger_theme_bdata_expr_required',
+        description:
+            'BData renders <b:data expr="..."/> so the expr attribute is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BDataExprVisitor(this, context),
+    );
+  }
+}
+
+class _BDataExprVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BDataExprVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BData')) return;
+    final hasExpr = namedArgument(node, 'expr') != null;
+    final hasName = namedArgument(node, 'name') != null;
+    if (!hasExpr && !hasName) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1685,6 +1777,8 @@ List<AnalysisRule> get warningRules => [
   AmpListSrcRequired(),
   BSkinVariablesRequired(),
   BTagMissingName(),
+  BArgNameRequired(),
+  BDataExprRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.
