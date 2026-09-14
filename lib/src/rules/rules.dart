@@ -1099,6 +1099,143 @@ class _BClassArgsVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `BVariable` requires `name` and `type` attributes.
+class BVariableRequiredArgs extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bvariable_required_args',
+    "BVariable requires 'name' and 'type' attributes.",
+    correction: "Add missing 'name:' or 'type:' parameter.",
+  );
+
+  BVariableRequiredArgs()
+    : super(
+        name: 'blogger_theme_bvariable_required_args',
+        description:
+            'BVariable defines Blogger theme designer variables so name and type are required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BVariableArgsVisitor(this, context),
+    );
+  }
+}
+
+class _BVariableArgsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BVariableArgsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BVariable')) return;
+    final hasName = namedArgument(node, 'name') != null;
+    final hasType = namedArgument(node, 'type') != null;
+    if (!hasName || !hasType) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BInclude` requires `name` attribute.
+class BIncludeNameRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_binclude_name_required',
+    "BInclude requires a 'name' attribute.",
+    correction: "Provide a 'name:' parameter with the includable identifier.",
+  );
+
+  BIncludeNameRequired()
+    : super(
+        name: 'blogger_theme_binclude_name_required',
+        description:
+            'BInclude includes a BIncludable macro so the name attribute is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BIncludeNameVisitor(this, context),
+    );
+  }
+}
+
+class _BIncludeNameVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BIncludeNameVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BInclude')) return;
+    if (namedArgument(node, 'name') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BClientScript` requires script callback or source.
+class BClientScriptContentRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bclient_script_content_required',
+    "BClientScript requires a script function or source parameter.",
+    correction: "Provide a function or script parameter for BClientScript.",
+  );
+
+  BClientScriptContentRequired()
+    : super(
+        name: 'blogger_theme_bclient_script_content_required',
+        description:
+            'BClientScript compiles Dart-to-JS client scripts so script source is required.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BClientScriptContentVisitor(this, context),
+    );
+  }
+}
+
+class _BClientScriptContentVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BClientScriptContentVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BClientScript')) return;
+    if (node.argumentList.arguments.isEmpty) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1122,6 +1259,9 @@ List<AnalysisRule> get warningRules => [
   BElseIfParentMustBeBIf(),
   BAttrNameRequired(),
   BClassExprOrNameRequired(),
+  BVariableRequiredArgs(),
+  BIncludeNameRequired(),
+  BClientScriptContentRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

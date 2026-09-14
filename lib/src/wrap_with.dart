@@ -113,6 +113,13 @@ const _wrappers = [
     leading: "id: 'includable-id', ",
   ),
   Wrapper(
+    'bSkin',
+    'BSkin',
+    WrapSlot.children,
+    leading: "'', variables: ",
+    isPositionalChildren: true,
+  ),
+  Wrapper(
     'bWidget',
     'BWidget',
     WrapSlot.children,

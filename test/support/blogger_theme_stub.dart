@@ -77,7 +77,33 @@ class AmpState extends Component {
 
 class BSkin extends Component {
   final String css;
-  const BSkin(this.css);
+  final List<Component>? variables;
+  const BSkin(this.css, {this.variables});
+}
+
+class BVariable extends Component {
+  final String? name;
+  final String? type;
+  final String? description;
+  final String? defaultValue;
+  final String? value;
+  const BVariable({
+    this.name,
+    this.type,
+    this.description,
+    this.defaultValue,
+    this.value,
+  });
+}
+
+class BInclude extends Component {
+  final String? name;
+  const BInclude({this.name});
+}
+
+class BClientScript extends Component {
+  final dynamic script;
+  const BClientScript([this.script]);
 }
 
 class BWidget extends Component {

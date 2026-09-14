@@ -29,6 +29,9 @@ void main() {
     defineReflectiveTests(BElseIfParentMustBeBIfTest);
     defineReflectiveTests(BAttrNameRequiredTest);
     defineReflectiveTests(BClassExprOrNameRequiredTest);
+    defineReflectiveTests(BVariableRequiredArgsTest);
+    defineReflectiveTests(BIncludeNameRequiredTest);
+    defineReflectiveTests(BClientScriptContentRequiredTest);
   });
 }
 
@@ -460,5 +463,59 @@ class BClassExprOrNameRequiredTest extends RuleTest {
 
   Future<void> test_quietWithName() => assertClean(
     "Component build() => BClass(name: 'active');",
+  );
+}
+
+@reflectiveTest
+class BVariableRequiredArgsTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BVariableRequiredArgs();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingNameOrType() => assertWarning(
+    "Component build() => BVariable(name: 'keycolor');",
+    'BVariable',
+  );
+
+  Future<void> test_quietWithNameAndType() => assertClean(
+    "Component build() => BVariable(name: 'keycolor', type: 'color');",
+  );
+}
+
+@reflectiveTest
+class BIncludeNameRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BIncludeNameRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingName() => assertWarning(
+    'Component build() => BInclude();',
+    'BInclude',
+  );
+
+  Future<void> test_quietWithName() => assertClean(
+    "Component build() => BInclude(name: 'postTitle');",
+  );
+}
+
+@reflectiveTest
+class BClientScriptContentRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BClientScriptContentRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingScriptContent() => assertWarning(
+    'Component build() => BClientScript();',
+    'BClientScript',
+  );
+
+  Future<void> test_quietWithScriptContent() => assertClean(
+    "Component build() => BClientScript('console.log(1)');",
   );
 }
