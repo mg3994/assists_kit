@@ -28,8 +28,13 @@ import 'src/convert_to_stateful.dart';
 import 'src/convert_to_stateless.dart';
 import 'src/move_widget.dart';
 import 'src/remove_widget.dart';
+import 'src/rules/add_amp_iframe_sandbox.dart';
+import 'src/rules/add_amp_img_dimensions.dart';
+import 'src/rules/add_bwidget_type.dart';
 import 'src/rules/add_controller_mirror.dart';
 import 'src/rules/add_escape_false.dart';
+import 'src/rules/add_html_img_alt.dart';
+import 'src/rules/clear_bskin_css.dart';
 import 'src/rules/rules.dart';
 import 'src/swap_with_child.dart';
 import 'src/wrap_with.dart';
@@ -79,6 +84,26 @@ class AssistsKitPlugin extends Plugin {
     registry.registerFixForRule(
       RawTextEscapeFalse.code,
       AddEscapeFalse.new,
+    );
+    registry.registerFixForRule(
+      AmpImgDimensionsRequired.code,
+      AddAmpImgDimensions.new,
+    );
+    registry.registerFixForRule(
+      BWidgetTypeRequired.code,
+      AddBWidgetType.new,
+    );
+    registry.registerFixForRule(
+      AmpIframeSandboxRequired.code,
+      AddAmpIframeSandbox.new,
+    );
+    registry.registerFixForRule(
+      BSkinEmptyCssAmpRule.code,
+      ClearBSkinCss.new,
+    );
+    registry.registerFixForRule(
+      HtmlImgAltRequired.code,
+      AddHtmlImgAlt.new,
     );
   }
 }
