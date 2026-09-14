@@ -125,6 +125,18 @@ const _wrappers = [
   ),
   Wrapper('ampAccordion', 'AmpAccordion', WrapSlot.children),
   Wrapper(
+    'ampLightbox',
+    'AmpLightbox',
+    WrapSlot.children,
+    leading: "id: 'lightbox1', layout: 'nodisplay', ",
+  ),
+  Wrapper(
+    'ampState',
+    'AmpState',
+    WrapSlot.children,
+    leading: "id: 'myState', ",
+  ),
+  Wrapper(
     'ampVideo',
     'AmpVideo',
     WrapSlot.children,

@@ -50,6 +50,36 @@ class BSection extends Component {
   });
 }
 
+class AmpInstagram extends Component {
+  final String? shortcode;
+  final String? dataShortcode;
+  const AmpInstagram({this.shortcode, this.dataShortcode});
+}
+
+class AmpTwitter extends Component {
+  final String? tweetid;
+  final String? tweetId;
+  const AmpTwitter({this.tweetid, this.tweetId});
+}
+
+class AmpLightbox extends Component {
+  final String? id;
+  final String? layout;
+  final List<Component> children;
+  const AmpLightbox({this.id, this.layout, this.children = const []});
+}
+
+class AmpState extends Component {
+  final String? id;
+  final List<Component> children;
+  const AmpState({this.id, this.children = const []});
+}
+
+class BSkin extends Component {
+  final String css;
+  const BSkin(this.css);
+}
+
 class BWidget extends Component {
   final String? id;
   final String? type;

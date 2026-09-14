@@ -846,6 +846,107 @@ class _AmpYoutubeVideoidVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `AmpInstagram` and `AmpTwitter` social embeds require identifier attributes.
+class AmpSocialEmbedIdRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_social_embed_id_required',
+    "Social embeds (AmpInstagram/AmpTwitter) require an identifier attribute ('shortcode' or 'tweetid').",
+    correction: "Add 'shortcode:' or 'tweetid:' attribute.",
+  );
+
+  AmpSocialEmbedIdRequired()
+    : super(
+        name: 'blogger_theme_amp_social_embed_id_required',
+        description:
+            'Social embeds require specific post/tweet identifier attributes.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpSocialEmbedVisitor(this, context),
+    );
+  }
+}
+
+class _AmpSocialEmbedVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpSocialEmbedVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (isBloggerThemeCreation(node, 'AmpInstagram')) {
+      final hasShortcode = namedArgument(node, 'shortcode') != null ||
+          namedArgument(node, 'dataShortcode') != null;
+      if (!hasShortcode) rule.reportAtNode(node.constructorName);
+    } else if (isBloggerThemeCreation(node, 'AmpTwitter')) {
+      final hasTweetId = namedArgument(node, 'tweetid') != null ||
+          namedArgument(node, 'tweetId') != null;
+      if (!hasTweetId) rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// For AMP compliance, `BSkin` should keep CSS string empty `""` and put custom CSS in `<style amp-custom>`.
+class BSkinEmptyCssAmpRule extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bskin_empty_css_amp',
+    "For AMP themes, keep the BSkin CSS string empty (\"\") and put custom CSS in <style amp-custom>.",
+    correction: "Change first parameter of BSkin to \"\" and move CSS to style({'amp-custom': 'amp-custom'}, [...]).",
+  );
+
+  BSkinEmptyCssAmpRule()
+    : super(
+        name: 'blogger_theme_bskin_empty_css_amp',
+        description:
+            'AMP validation requires b:skin CSS output to be empty to prevent default Blogger skin CSS injection.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BSkinCssVisitor(this, context),
+    );
+  }
+}
+
+class _BSkinCssVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BSkinCssVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BSkin')) return;
+    final args = node.argumentList.arguments;
+    if (args.isEmpty) return;
+    final firstArg = args.first;
+    if (firstArg is StringLiteral) {
+      final value = firstArg.stringValue;
+      if (value != null && value.trim().isNotEmpty) {
+        rule.reportAtNode(firstArg);
+      }
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -864,6 +965,8 @@ List<AnalysisRule> get warningRules => [
   BIncludableIdRequired(),
   AmpAudioSrcRequired(),
   AmpYoutubeVideoidRequired(),
+  AmpSocialEmbedIdRequired(),
+  BSkinEmptyCssAmpRule(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

@@ -24,6 +24,8 @@ void main() {
     defineReflectiveTests(BIncludableIdRequiredTest);
     defineReflectiveTests(AmpAudioSrcRequiredTest);
     defineReflectiveTests(AmpYoutubeVideoidRequiredTest);
+    defineReflectiveTests(AmpSocialEmbedIdRequiredTest);
+    defineReflectiveTests(BSkinEmptyCssAmpRuleTest);
   });
 }
 
@@ -365,5 +367,41 @@ class AmpYoutubeVideoidRequiredTest extends RuleTest {
 
   Future<void> test_quietWithVideoid() => assertClean(
     "Component build() => AmpYoutube(videoid: 'xyz123');",
+  );
+}
+
+@reflectiveTest
+class AmpSocialEmbedIdRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpSocialEmbedIdRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingInstagramShortcode() => assertWarning(
+    'Component build() => AmpInstagram();',
+    'AmpInstagram',
+  );
+
+  Future<void> test_quietWithShortcode() => assertClean(
+    "Component build() => AmpInstagram(shortcode: 'abc123');",
+  );
+}
+
+@reflectiveTest
+class BSkinEmptyCssAmpRuleTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BSkinEmptyCssAmpRule();
+    super.setUp();
+  }
+
+  Future<void> test_reportsNonEmptyCss() => assertWarning(
+    "Component build() => BSkin('body { color: red; }');",
+    "'body { color: red; }'",
+  );
+
+  Future<void> test_quietWithEmptyCss() => assertClean(
+    "Component build() => BSkin('');",
   );
 }
