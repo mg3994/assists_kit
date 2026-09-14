@@ -1743,6 +1743,334 @@ class _BDataExprVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `AmpAnalytics` requires `type` or `config` attribute.
+class AmpAnalyticsTypeOrConfigRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_analytics_type_or_config_required',
+    "AmpAnalytics requires either a 'type' or 'config' attribute.",
+    correction: "Add 'type:' or 'config:' parameter to AmpAnalytics.",
+  );
+
+  AmpAnalyticsTypeOrConfigRequired()
+    : super(
+        name: 'blogger_theme_amp_analytics_type_or_config_required',
+        description:
+            'AmpAnalytics requires a provider type or JSON configuration source.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpAnalyticsVisitor(this, context),
+    );
+  }
+}
+
+class _AmpAnalyticsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpAnalyticsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpAnalytics')) return;
+    final hasType = namedArgument(node, 'type') != null;
+    final hasConfig = namedArgument(node, 'config') != null;
+    if (!hasType && !hasConfig) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpAd` requires `type`, `width`, and `height` attributes.
+class AmpAdRequiredArgs extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_ad_required_args',
+    "AmpAd requires 'type', 'width', and 'height' attributes.",
+    correction: "Add missing 'type:', 'width:', or 'height:' parameters.",
+  );
+
+  AmpAdRequiredArgs()
+    : super(
+        name: 'blogger_theme_amp_ad_required_args',
+        description:
+            'AMP ad elements require ad network type along with layout dimensions.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpAdVisitor(this, context),
+    );
+  }
+}
+
+class _AmpAdVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpAdVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpAd')) return;
+    final hasType = namedArgument(node, 'type') != null;
+    final hasWidth = namedArgument(node, 'width') != null;
+    final hasHeight = namedArgument(node, 'height') != null;
+    if (!hasType || !hasWidth || !hasHeight) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpFitText` requires `width` and `height` attributes.
+class AmpFitTextDimensionsRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_fit_text_dimensions_required',
+    "AmpFitText requires both 'width' and 'height' attributes.",
+    correction: "Add missing 'width:' or 'height:' parameters.",
+  );
+
+  AmpFitTextDimensionsRequired()
+    : super(
+        name: 'blogger_theme_amp_fit_text_dimensions_required',
+        description:
+            'AmpFitText requires fixed layout dimensions for responsive font scaling.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpFitTextVisitor(this, context),
+    );
+  }
+}
+
+class _AmpFitTextVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpFitTextVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpFitText')) return;
+    final hasWidth = namedArgument(node, 'width') != null;
+    final hasHeight = namedArgument(node, 'height') != null;
+    if (!hasWidth || !hasHeight) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpTwitter` requires `tweetid` or `tweetId` attribute.
+class AmpTwitterTweetidRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_twitter_tweetid_required',
+    "AmpTwitter requires a 'tweetid' or 'tweetId' attribute.",
+    correction: "Provide a 'tweetid:' parameter.",
+  );
+
+  AmpTwitterTweetidRequired()
+    : super(
+        name: 'blogger_theme_amp_twitter_tweetid_required',
+        description:
+            'AmpTwitter requires a tweet ID to render the embedded tweet.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpTwitterVisitor(this, context),
+    );
+  }
+}
+
+class _AmpTwitterVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpTwitterVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpTwitter')) return;
+    final hasTweetId = namedArgument(node, 'tweetid') != null ||
+        namedArgument(node, 'tweetId') != null;
+    if (!hasTweetId) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpStory` requires metadata attributes.
+class AmpStoryRequiredArgs extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_story_required_args',
+    "AmpStory requires 'title', 'publisher', 'publisherLogoSrc', and 'posterPortraitSrc' attributes.",
+    correction: "Provide all required AmpStory metadata parameters.",
+  );
+
+  AmpStoryRequiredArgs()
+    : super(
+        name: 'blogger_theme_amp_story_required_args',
+        description:
+            'AMP Stories require full metadata attributes for standard validation.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpStoryVisitor(this, context),
+    );
+  }
+}
+
+class _AmpStoryVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpStoryVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpStory')) return;
+    final hasTitle = namedArgument(node, 'title') != null;
+    final hasPublisher = namedArgument(node, 'publisher') != null;
+    final hasLogo = namedArgument(node, 'publisherLogoSrc') != null;
+    final hasPoster = namedArgument(node, 'posterPortraitSrc') != null;
+    if (!hasTitle || !hasPublisher || !hasLogo || !hasPoster) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpStoryPage` requires `id` attribute.
+class AmpStoryPageIdRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_story_page_id_required',
+    "AmpStoryPage requires an 'id' attribute.",
+    correction: "Provide an 'id:' parameter for AmpStoryPage.",
+  );
+
+  AmpStoryPageIdRequired()
+    : super(
+        name: 'blogger_theme_amp_story_page_id_required',
+        description:
+            'AMP Story pages require unique id attributes for story navigation.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpStoryPageVisitor(this, context),
+    );
+  }
+}
+
+class _AmpStoryPageVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpStoryPageVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpStoryPage')) return;
+    if (namedArgument(node, 'id') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpConsent` requires `id` attribute.
+class AmpConsentIdRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_consent_id_required',
+    "AmpConsent requires an 'id' attribute.",
+    correction: "Provide an 'id:' parameter for AmpConsent.",
+  );
+
+  AmpConsentIdRequired()
+    : super(
+        name: 'blogger_theme_amp_consent_id_required',
+        description:
+            'AMP Consent component requires a unique element ID attribute.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpConsentVisitor(this, context),
+    );
+  }
+}
+
+class _AmpConsentVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpConsentVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpConsent')) return;
+    if (namedArgument(node, 'id') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1779,6 +2107,13 @@ List<AnalysisRule> get warningRules => [
   BTagMissingName(),
   BArgNameRequired(),
   BDataExprRequired(),
+  AmpAnalyticsTypeOrConfigRequired(),
+  AmpAdRequiredArgs(),
+  AmpFitTextDimensionsRequired(),
+  AmpTwitterTweetidRequired(),
+  AmpStoryRequiredArgs(),
+  AmpStoryPageIdRequired(),
+  AmpConsentIdRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

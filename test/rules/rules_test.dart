@@ -42,6 +42,13 @@ void main() {
     defineReflectiveTests(BTagMissingNameTest);
     defineReflectiveTests(BArgNameRequiredTest);
     defineReflectiveTests(BDataExprRequiredTest);
+    defineReflectiveTests(AmpAnalyticsTypeOrConfigRequiredTest);
+    defineReflectiveTests(AmpAdRequiredArgsTest);
+    defineReflectiveTests(AmpFitTextDimensionsRequiredTest);
+    defineReflectiveTests(AmpTwitterTweetidRequiredTest);
+    defineReflectiveTests(AmpStoryRequiredArgsTest);
+    defineReflectiveTests(AmpStoryPageIdRequiredTest);
+    defineReflectiveTests(AmpConsentIdRequiredTest);
   });
 }
 
@@ -708,5 +715,131 @@ class BDataExprRequiredTest extends RuleTest {
 
   Future<void> test_quietWithExpr() => assertClean(
     "Component build() => BData(expr: 'data:blog.title');",
+  );
+}
+
+@reflectiveTest
+class AmpAnalyticsTypeOrConfigRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpAnalyticsTypeOrConfigRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingTypeAndConfig() => assertWarning(
+    'Component build() => AmpAnalytics();',
+    'AmpAnalytics',
+  );
+
+  Future<void> test_quietWithType() => assertClean(
+    "Component build() => AmpAnalytics(type: 'googleanalytics');",
+  );
+}
+
+@reflectiveTest
+class AmpAdRequiredArgsTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpAdRequiredArgs();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingType() => assertWarning(
+    "Component build() => AmpAd(width: '300', height: '250');",
+    'AmpAd',
+  );
+
+  Future<void> test_quietWithRequiredArgs() => assertClean(
+    "Component build() => AmpAd(type: 'adsense', width: '300', height: '250');",
+  );
+}
+
+@reflectiveTest
+class AmpFitTextDimensionsRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpFitTextDimensionsRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingDimensions() => assertWarning(
+    'Component build() => AmpFitText();',
+    'AmpFitText',
+  );
+
+  Future<void> test_quietWithDimensions() => assertClean(
+    "Component build() => AmpFitText(width: '300', height: '200');",
+  );
+}
+
+@reflectiveTest
+class AmpTwitterTweetidRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpTwitterTweetidRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingTweetId() => assertWarning(
+    'Component build() => AmpTwitter();',
+    'AmpTwitter',
+  );
+
+  Future<void> test_quietWithTweetId() => assertClean(
+    "Component build() => AmpTwitter(tweetid: '123456789');",
+  );
+}
+
+@reflectiveTest
+class AmpStoryRequiredArgsTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpStoryRequiredArgs();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingTitle() => assertWarning(
+    "Component build() => AmpStory(publisher: 'P', publisherLogoSrc: 'l.png', posterPortraitSrc: 'p.jpg');",
+    'AmpStory',
+  );
+
+  Future<void> test_quietWithAllMetadata() => assertClean(
+    "Component build() => AmpStory(title: 'T', publisher: 'P', publisherLogoSrc: 'l.png', posterPortraitSrc: 'p.jpg');",
+  );
+}
+
+@reflectiveTest
+class AmpStoryPageIdRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpStoryPageIdRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingId() => assertWarning(
+    'Component build() => AmpStoryPage();',
+    'AmpStoryPage',
+  );
+
+  Future<void> test_quietWithId() => assertClean(
+    "Component build() => AmpStoryPage(id: 'page1');",
+  );
+}
+
+@reflectiveTest
+class AmpConsentIdRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpConsentIdRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingId() => assertWarning(
+    'Component build() => AmpConsent();',
+    'AmpConsent',
+  );
+
+  Future<void> test_quietWithId() => assertClean(
+    "Component build() => AmpConsent(id: 'consent1');",
   );
 }

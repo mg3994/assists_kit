@@ -99,6 +99,38 @@ class AmpTwitter extends Component {
   const AmpTwitter({this.tweetid, this.tweetId});
 }
 
+class AmpFitText extends Component {
+  final String? width;
+  final String? height;
+  final List<Component> children;
+  const AmpFitText({this.width, this.height, this.children = const []});
+}
+
+class AmpAnalytics extends Component {
+  final String? type;
+  final String? config;
+  final List<Component> children;
+  const AmpAnalytics({this.type, this.config, this.children = const []});
+}
+
+class AmpAd extends Component {
+  final String? type;
+  final String? width;
+  final String? height;
+  const AmpAd({this.type, this.width, this.height});
+}
+
+class AmpConsent extends Component {
+  final String? id;
+  final List<Component> children;
+  const AmpConsent({this.id, this.children = const []});
+}
+
+class AmpSelector extends Component {
+  final List<Component> children;
+  const AmpSelector({this.children = const []});
+}
+
 class AmpLightbox extends Component {
   final String? id;
   final String? layout;

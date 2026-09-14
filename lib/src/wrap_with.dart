@@ -218,6 +218,25 @@ const _wrappers = [
     WrapSlot.children,
     leading: "title: 'Story Title', publisher: 'Publisher Name', publisherLogoSrc: 'logo.png', posterPortraitSrc: 'poster.jpg', ",
   ),
+  Wrapper(
+    'ampFitText',
+    'AmpFitText',
+    WrapSlot.children,
+    leading: "width: '300', height: '200', ",
+  ),
+  Wrapper(
+    'ampAnalytics',
+    'AmpAnalytics',
+    WrapSlot.children,
+    leading: "type: 'googleanalytics', ",
+  ),
+  Wrapper(
+    'ampConsent',
+    'AmpConsent',
+    WrapSlot.children,
+    leading: "id: 'consent1', ",
+  ),
+  Wrapper('ampSelector', 'AmpSelector', WrapSlot.children),
   Wrapper('fragment', 'Fragment', WrapSlot.children, isPositionalChildren: true),
   Wrapper('builder', 'Builder', WrapSlot.builder),
   Wrapper(
