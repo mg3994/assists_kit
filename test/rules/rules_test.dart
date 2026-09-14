@@ -22,6 +22,8 @@ void main() {
     defineReflectiveTests(AmpImgDimensionsRequiredTest);
     defineReflectiveTests(BEvalExprRequiredTest);
     defineReflectiveTests(BIncludableIdRequiredTest);
+    defineReflectiveTests(AmpAudioSrcRequiredTest);
+    defineReflectiveTests(AmpYoutubeVideoidRequiredTest);
   });
 }
 
@@ -327,5 +329,41 @@ class BIncludableIdRequiredTest extends RuleTest {
 
   Future<void> test_quietWithId() => assertClean(
     "Component build() => BIncludable(id: 'main');",
+  );
+}
+
+@reflectiveTest
+class AmpAudioSrcRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpAudioSrcRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingSrc() => assertWarning(
+    'Component build() => AmpAudio();',
+    'AmpAudio',
+  );
+
+  Future<void> test_quietWithSrc() => assertClean(
+    "Component build() => AmpAudio(src: 'audio.mp3');",
+  );
+}
+
+@reflectiveTest
+class AmpYoutubeVideoidRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpYoutubeVideoidRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingVideoid() => assertWarning(
+    'Component build() => AmpYoutube();',
+    'AmpYoutube',
+  );
+
+  Future<void> test_quietWithVideoid() => assertClean(
+    "Component build() => AmpYoutube(videoid: 'xyz123');",
   );
 }

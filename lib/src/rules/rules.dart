@@ -753,6 +753,99 @@ class _BIncludableIdVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `AmpAudio` and `AmpVideo` require a `src` attribute.
+class AmpAudioSrcRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_audio_src_required',
+    "AmpAudio and AmpVideo require a 'src' attribute.",
+    correction: "Provide a 'src:' parameter with the media URL.",
+  );
+
+  AmpAudioSrcRequired()
+    : super(
+        name: 'blogger_theme_amp_audio_src_required',
+        description:
+            'AMP media elements require a src attribute to specify media location.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpAudioSrcVisitor(this, context),
+    );
+  }
+}
+
+class _AmpAudioSrcVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpAudioSrcVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpAudio') &&
+        !isBloggerThemeCreation(node, 'AmpVideo')) {
+      return;
+    }
+    if (namedArgument(node, 'src') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `AmpYoutube` requires a `videoid` attribute.
+class AmpYoutubeVideoidRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_youtube_videoid_required',
+    "AmpYoutube requires a 'videoid' attribute.",
+    correction: "Provide a 'videoid:' parameter with the YouTube video ID.",
+  );
+
+  AmpYoutubeVideoidRequired()
+    : super(
+        name: 'blogger_theme_amp_youtube_videoid_required',
+        description:
+            'AmpYoutube embeds require a videoid attribute to locate the YouTube video.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpYoutubeVideoidVisitor(this, context),
+    );
+  }
+}
+
+class _AmpYoutubeVideoidVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpYoutubeVideoidVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpYoutube')) return;
+    if (namedArgument(node, 'videoid') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -769,6 +862,8 @@ List<AnalysisRule> get warningRules => [
   AmpImgDimensionsRequired(),
   BEvalExprRequired(),
   BIncludableIdRequired(),
+  AmpAudioSrcRequired(),
+  AmpYoutubeVideoidRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

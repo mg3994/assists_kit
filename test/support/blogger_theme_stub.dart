@@ -129,6 +129,49 @@ class AmpAccordion extends Component {
   const AmpAccordion({this.children = const []});
 }
 
+class AmpAudio extends Component {
+  final String? src;
+  const AmpAudio({this.src});
+}
+
+class AmpVideo extends Component {
+  final String? src;
+  final String? width;
+  final String? height;
+  final String? layout;
+  final List<Component> children;
+  const AmpVideo({
+    this.src,
+    this.width,
+    this.height,
+    this.layout,
+    this.children = const [],
+  });
+}
+
+class AmpYoutube extends Component {
+  final String? videoid;
+  final String? width;
+  final String? height;
+  final String? layout;
+  const AmpYoutube({this.videoid, this.width, this.height, this.layout});
+}
+
+class AmpStory extends Component {
+  final String? title;
+  final String? publisher;
+  final String? publisherLogoSrc;
+  final String? posterPortraitSrc;
+  final List<Component> children;
+  const AmpStory({
+    this.title,
+    this.publisher,
+    this.publisherLogoSrc,
+    this.posterPortraitSrc,
+    this.children = const [],
+  });
+}
+
 DomComponent div([dynamic arg1, dynamic arg2]) => DomComponent('div');
 DomComponent h1([dynamic arg1, dynamic arg2]) => DomComponent('h1');
 ''';

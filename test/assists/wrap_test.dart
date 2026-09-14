@@ -52,6 +52,8 @@ class Home extends StatelessWidget {
         'Wrap with AmpCarousel',
         'Wrap with AmpSidebar',
         'Wrap with AmpAccordion',
+        'Wrap with AmpVideo',
+        'Wrap with AmpStory',
         'Wrap with Fragment',
         'Wrap with Builder',
         'Wrap with FutureBuilder',
@@ -350,6 +352,22 @@ class Box extends StatelessWidget {
     return Center(
       child: BWidget(
         id: 'widget-id', type: 'Blog', children: [
+          Text('hi'),
+        ],
+      ),
+    );
+'''),
+    );
+  }
+
+  Future<void> test_wrapWithAmpVideoHasLeadingAttributes() async {
+    final out = await apply(_screen, "Text('hi')", 'Wrap with AmpVideo');
+    expect(
+      out,
+      contains('''
+    return Center(
+      child: AmpVideo(
+        width: '640', height: '360', layout: 'responsive', src: 'video.mp4', children: [
           Text('hi'),
         ],
       ),

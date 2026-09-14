@@ -124,6 +124,18 @@ const _wrappers = [
     leading: "id: 'sidebar1', layout: 'nodisplay', ",
   ),
   Wrapper('ampAccordion', 'AmpAccordion', WrapSlot.children),
+  Wrapper(
+    'ampVideo',
+    'AmpVideo',
+    WrapSlot.children,
+    leading: "width: '640', height: '360', layout: 'responsive', src: 'video.mp4', ",
+  ),
+  Wrapper(
+    'ampStory',
+    'AmpStory',
+    WrapSlot.children,
+    leading: "title: 'Story Title', publisher: 'Publisher Name', publisherLogoSrc: 'logo.png', posterPortraitSrc: 'poster.jpg', ",
+  ),
   Wrapper('fragment', 'Fragment', WrapSlot.children, isPositionalChildren: true),
   Wrapper('builder', 'Builder', WrapSlot.builder),
   Wrapper(
