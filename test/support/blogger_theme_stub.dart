@@ -186,6 +186,12 @@ class BClass extends Component {
   const BClass({this.name, this.exprName});
 }
 
+class BTag extends Component {
+  final String? name;
+  final List<Component> children;
+  const BTag({this.name, this.children = const []});
+}
+
 class BLoop extends Component {
   final String? values;
   final String? varName;

@@ -1275,6 +1275,8 @@ class _HtmlImgAltVisitor extends SimpleAstVisitor<void> {
   @override
   void visitMethodInvocation(MethodInvocation node) {
     if (node.methodName.name != 'img') return;
+    final element = node.methodName.element;
+    if (element != null && !isBloggerThemeElement(element)) return;
     bool hasAlt = false;
     for (final arg in node.argumentList.arguments) {
       if (arg is SetOrMapLiteral) {
@@ -1334,6 +1336,8 @@ class _HtmlAnchorHrefVisitor extends SimpleAstVisitor<void> {
   @override
   void visitMethodInvocation(MethodInvocation node) {
     if (node.methodName.name != 'a') return;
+    final element = node.methodName.element;
+    if (element != null && !isBloggerThemeElement(element)) return;
     bool hasHref = false;
     for (final arg in node.argumentList.arguments) {
       if (arg is SetOrMapLiteral) {
@@ -1393,6 +1397,8 @@ class _HtmlFormActionVisitor extends SimpleAstVisitor<void> {
   @override
   void visitMethodInvocation(MethodInvocation node) {
     if (node.methodName.name != 'form') return;
+    final element = node.methodName.element;
+    if (element != null && !isBloggerThemeElement(element)) return;
     bool hasAction = false;
     for (final arg in node.argumentList.arguments) {
       if (arg is SetOrMapLiteral) {
@@ -1548,6 +1554,103 @@ class _AmpListSrcVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// `BSkin` without variables or CSS definition.
+class BSkinVariablesRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_bskin_variables_required',
+    "BSkin should declare custom variables or CSS rules.",
+    correction: "Provide 'variables:' list or CSS string parameter.",
+  );
+
+  BSkinVariablesRequired()
+    : super(
+        name: 'blogger_theme_bskin_variables_required',
+        description:
+            'BSkin defines theme skin variables so providing variables or CSS content is recommended.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BSkinVarsVisitor(this, context),
+    );
+  }
+}
+
+class _BSkinVarsVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BSkinVarsVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BSkin')) return;
+    final args = node.argumentList.arguments;
+    final hasVars = namedArgument(node, 'variables') != null;
+    bool hasNonEmptyCss = false;
+    if (args.isNotEmpty && args.first is StringLiteral) {
+      final value = (args.first as StringLiteral).stringValue;
+      if (value != null && value.trim().isNotEmpty) hasNonEmptyCss = true;
+    }
+    if (!hasVars && !hasNonEmptyCss) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
+/// `BTag` requires a `name` attribute.
+class BTagMissingName extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_btag_missing_name',
+    "BTag requires a 'name' attribute.",
+    correction: "Provide a 'name:' parameter for BTag.",
+  );
+
+  BTagMissingName()
+    : super(
+        name: 'blogger_theme_btag_missing_name',
+        description:
+            'BTag renders custom Blogger dynamic tags so the name attribute is mandatory.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BTagVisitor(this, context),
+    );
+  }
+}
+
+class _BTagVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BTagVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BTag')) return;
+    if (namedArgument(node, 'name') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -1580,6 +1683,8 @@ List<AnalysisRule> get warningRules => [
   AmpIframeSandboxRequired(),
   AmpSocialShareTypeRequired(),
   AmpListSrcRequired(),
+  BSkinVariablesRequired(),
+  BTagMissingName(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

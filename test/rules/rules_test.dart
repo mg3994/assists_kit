@@ -38,6 +38,8 @@ void main() {
     defineReflectiveTests(AmpIframeSandboxRequiredTest);
     defineReflectiveTests(AmpSocialShareTypeRequiredTest);
     defineReflectiveTests(AmpListSrcRequiredTest);
+    defineReflectiveTests(BSkinVariablesRequiredTest);
+    defineReflectiveTests(BTagMissingNameTest);
   });
 }
 
@@ -632,5 +634,41 @@ class AmpListSrcRequiredTest extends RuleTest {
 
   Future<void> test_quietWithSrc() => assertClean(
     "Component build() => AmpList(src: 'data.json');",
+  );
+}
+
+@reflectiveTest
+class BSkinVariablesRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BSkinVariablesRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingVariables() => assertWarning(
+    "Component build() => BSkin('');",
+    'BSkin',
+  );
+
+  Future<void> test_quietWithVariables() => assertClean(
+    "Component build() => BSkin('', variables: [BVariable(name: 'keycolor', type: 'color')]);",
+  );
+}
+
+@reflectiveTest
+class BTagMissingNameTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BTagMissingName();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingName() => assertWarning(
+    'Component build() => BTag();',
+    'BTag',
+  );
+
+  Future<void> test_quietWithName() => assertClean(
+    "Component build() => BTag(name: 'script');",
   );
 }

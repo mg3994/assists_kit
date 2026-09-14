@@ -44,6 +44,8 @@ widget type such as a `child` parameter):
 | Assist | Result |
 |---|---|
 | Wrap with Center / Container / SizedBox / Expanded / Flexible / SafeArea / GestureDetector / GlassEffectContainer | `Name(child: …)` |
+| Wrap with div / header / footer / section / article / aside / nav / main / p / span / h1 / h2 / h3 / ul / ol / li / a / button / form / label / figure / figcaption / table / tr / BIf / BElseIf / Fragment | positional `Name([ … ])` for `blogger_theme` components |
+| Wrap with BSection / BLoop / BIncludable / BSkin / BWidget / AmpCarousel / AmpSidebar / AmpAccordion / AmpLightbox / AmpState / AmpVideo / AmpStory | `Name(…, children: [ … ])` for `blogger_theme` components |
 | Wrap with Padding | `Padding(padding: const EdgeInsets.all(8.0), child: …)` |
 | Wrap with Column / Row / Stack | multi-line `children: [ … ]`; with a selection spanning several siblings in a `children:` list, wraps them together |
 | Wrap with Builder | `Builder(builder: (context) => …)` |
@@ -72,6 +74,29 @@ With the cursor on a class header line:
 | `dartnative_custom_paint_finite_size` | `CustomPaint(size: Size(double.infinity, …))`, which paints off-screen |
 | `dartnative_positioned_must_be_outermost` | a wrapper above `Positioned` in a `Stack`, which is dropped |
 | `dartnative_snackbar_action_not_wired` | `SnackBarAction.onPressed`, which never fires |
+| `blogger_theme_raw_text_escape_false` | `Text(...)` containing Blogger XML tags without `escape: false` |
+| `blogger_theme_bsection_unique_id` | `BSection` or `BWidget` with duplicate or missing `id` attribute |
+| `blogger_theme_bwidget_type_required` | `BWidget` missing `type:` attribute |
+| `blogger_theme_bloop_required_args` | `BLoop` missing `values:` or `varName:` attribute |
+| `blogger_theme_amp_img_dimensions_required` | `AmpImg` missing required `width:` or `height:` for AMP |
+| `blogger_theme_beval_expr_required` | `BEval` missing required `expr:` attribute |
+| `blogger_theme_bincludable_id_required` | `BIncludable` missing required `id:` attribute |
+| `blogger_theme_amp_audio_src_required` | `AmpAudio` or `AmpVideo` missing `src:` attribute |
+| `blogger_theme_amp_youtube_videoid_required` | `AmpYoutube` missing `videoid:` attribute |
+| `blogger_theme_amp_social_embed_id_required` | `AmpInstagram` or `AmpTwitter` missing shortcode/tweetid attribute |
+| `blogger_theme_bskin_empty_css_amp` | `BSkin` with non-empty CSS string in AMP themes |
+| `blogger_theme_belseif_parent_must_be_bif` | `BElseIf` or `BElse` used outside a `BIf` component |
+| `blogger_theme_battr_name_required` | `BAttr` missing `name:` attribute |
+| `blogger_theme_bclass_expr_or_name_required` | `BClass` missing both `name:` and `exprName:` attributes |
+| `blogger_theme_bvariable_required_args` | `BVariable` missing `name:` or `type:` attribute |
+| `blogger_theme_binclude_name_required` | `BInclude` missing `name:` attribute |
+| `blogger_theme_bclient_script_content_required` | `BClientScript` missing script callback or source |
+| `blogger_theme_html_img_alt_required` | `img(...)` helper call missing `alt:` attribute |
+| `blogger_theme_html_anchor_href_required` | `a(...)` helper call missing `href:` attribute |
+| `blogger_theme_html_form_action_required` | `form(...)` helper call missing `action:` attribute |
+| `blogger_theme_amp_iframe_sandbox_required` | `AmpIframe` missing `sandbox:` attribute |
+| `blogger_theme_amp_social_share_type_required` | `AmpSocialShare` missing `type:` attribute |
+| `blogger_theme_amp_list_src_required` | `AmpList` missing `src:` attribute |
 
 Opt-in lint:
 
