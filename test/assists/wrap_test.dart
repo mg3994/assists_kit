@@ -48,6 +48,7 @@ class Home extends StatelessWidget {
         'Wrap with AmpAnalytics',
         'Wrap with AmpConsent',
         'Wrap with AmpSelector',
+        'Wrap with BElse',
         'Wrap with p',
         'Wrap with table',
         'Wrap with tr',

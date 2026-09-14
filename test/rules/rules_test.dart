@@ -18,6 +18,7 @@ void main() {
     defineReflectiveTests(RawTextEscapeFalseTest);
     defineReflectiveTests(BSectionUniqueIdTest);
     defineReflectiveTests(BWidgetTypeRequiredTest);
+    defineReflectiveTests(BWidgetTypeValidTest);
     defineReflectiveTests(BLoopRequiredArgsTest);
     defineReflectiveTests(AmpImgDimensionsRequiredTest);
     defineReflectiveTests(BEvalExprRequiredTest);
@@ -282,6 +283,24 @@ class BWidgetTypeRequiredTest extends RuleTest {
 
   Future<void> test_quietWithType() => assertClean(
     "Component build() => BWidget(id: 'main', type: 'Blog');",
+  );
+}
+
+@reflectiveTest
+class BWidgetTypeValidTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = BWidgetTypeValid();
+    super.setUp();
+  }
+
+  Future<void> test_reportsInvalidWidgetType() => assertWarning(
+    "Component build() => BWidget(id: 'main', type: 'CustomUnknownType');",
+    "type: 'CustomUnknownType'",
+  );
+
+  Future<void> test_quietWithStandardWidgetType() => assertClean(
+    "Component build() => BWidget(id: 'main', type: 'PopularPosts');",
   );
 }
 

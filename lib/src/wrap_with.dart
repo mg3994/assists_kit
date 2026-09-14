@@ -118,6 +118,12 @@ const _wrappers = [
     isPositionalChildren: true,
   ),
   Wrapper(
+    'bElse',
+    'BElse',
+    WrapSlot.children,
+    isPositionalChildren: true,
+  ),
+  Wrapper(
     'bElseIf',
     'BElseIf',
     WrapSlot.children,

@@ -112,6 +112,83 @@ class _MenuVisitor extends CreationVisitor {
   }
 }
 
+/// `BWidget` type attribute must be a standard valid Blogger widget type.
+class BWidgetTypeValid extends AnalysisRule {
+  static const standardWidgetTypes = {
+    'Blog',
+    'Header',
+    'HTML',
+    'PageList',
+    'AdSense',
+    'PopularPosts',
+    'BlogArchive',
+    'FeaturedPost',
+    'Label',
+    'Profile',
+    'Text',
+    'Wikipedia',
+    'ContactForm',
+    'ReportAbuse',
+    'Attribution',
+    'Feed',
+    'Image',
+    'NewsBar',
+    'VideoBar',
+    'BlogSearch',
+    'Translate',
+    'Followers',
+    'Stats',
+  };
+
+  static final LintCode code = warning(
+    'blogger_theme_bwidget_type_valid',
+    "BWidget type is not a standard Blogger widget type.",
+    correction: "Use a standard widget type such as 'Blog', 'Header', 'HTML', 'PageList', or 'PopularPosts'.",
+  );
+
+  BWidgetTypeValid()
+    : super(
+        name: 'blogger_theme_bwidget_type_valid',
+        description:
+            'Blogger engine only recognizes standard widget types like Blog, Header, HTML, etc.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _BWidgetTypeValidVisitor(this, context),
+    );
+  }
+}
+
+class _BWidgetTypeValidVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _BWidgetTypeValidVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'BWidget')) return;
+    final typeArg = namedArgument(node, 'type');
+    if (typeArg == null) return;
+    final expr = typeArg.argumentExpression;
+    if (expr is StringLiteral) {
+      final value = expr.stringValue;
+      if (value != null && !BWidgetTypeValid.standardWidgetTypes.contains(value)) {
+        rule.reportAtNode(typeArg);
+      }
+    }
+  }
+}
+
 /// Only a uniform `Border` renders; per-side values are ignored.
 class UniformBorderOnly extends AnalysisRule {
   static final LintCode code = warning(
@@ -2083,6 +2160,7 @@ List<AnalysisRule> get warningRules => [
   RawTextEscapeFalse(),
   BSectionUniqueId(),
   BWidgetTypeRequired(),
+  BWidgetTypeValid(),
   BLoopRequiredArgs(),
   AmpImgDimensionsRequired(),
   BEvalExprRequired(),

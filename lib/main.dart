@@ -30,6 +30,9 @@ import 'src/move_widget.dart';
 import 'src/remove_widget.dart';
 import 'src/rules/add_amp_iframe_sandbox.dart';
 import 'src/rules/add_amp_img_dimensions.dart';
+import 'src/rules/add_beval_expr.dart';
+import 'src/rules/add_binclude_name.dart';
+import 'src/rules/add_bloop_args.dart';
 import 'src/rules/add_bwidget_type.dart';
 import 'src/rules/add_controller_mirror.dart';
 import 'src/rules/add_escape_false.dart';
@@ -104,6 +107,18 @@ class AssistsKitPlugin extends Plugin {
     registry.registerFixForRule(
       HtmlImgAltRequired.code,
       AddHtmlImgAlt.new,
+    );
+    registry.registerFixForRule(
+      BEvalExprRequired.code,
+      AddBEvalExpr.new,
+    );
+    registry.registerFixForRule(
+      BLoopRequiredArgs.code,
+      AddBLoopArgs.new,
+    );
+    registry.registerFixForRule(
+      BIncludeNameRequired.code,
+      AddBIncludeName.new,
     );
   }
 }
