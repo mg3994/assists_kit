@@ -30,9 +30,14 @@ import 'src/move_widget.dart';
 import 'src/remove_widget.dart';
 import 'src/rules/add_amp_iframe_sandbox.dart';
 import 'src/rules/add_amp_img_dimensions.dart';
+import 'src/rules/add_barg_name.dart';
+import 'src/rules/add_battr_name.dart';
+import 'src/rules/add_bdata_expr.dart';
 import 'src/rules/add_beval_expr.dart';
+import 'src/rules/add_bincludable_id.dart';
 import 'src/rules/add_binclude_name.dart';
 import 'src/rules/add_bloop_args.dart';
+import 'src/rules/add_bvariable_args.dart';
 import 'src/rules/add_bwidget_type.dart';
 import 'src/rules/add_controller_mirror.dart';
 import 'src/rules/add_escape_false.dart';
@@ -119,6 +124,26 @@ class AssistsKitPlugin extends Plugin {
     registry.registerFixForRule(
       BIncludeNameRequired.code,
       AddBIncludeName.new,
+    );
+    registry.registerFixForRule(
+      BAttrNameRequired.code,
+      AddBAttrName.new,
+    );
+    registry.registerFixForRule(
+      BVariableRequiredArgs.code,
+      AddBVariableArgs.new,
+    );
+    registry.registerFixForRule(
+      BIncludableIdRequired.code,
+      AddBIncludableId.new,
+    );
+    registry.registerFixForRule(
+      BArgNameRequired.code,
+      AddBArgName.new,
+    );
+    registry.registerFixForRule(
+      BDataExprRequired.code,
+      AddBDataExpr.new,
     );
   }
 }
