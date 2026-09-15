@@ -2148,6 +2148,164 @@ class _AmpConsentVisitor extends SimpleAstVisitor<void> {
   }
 }
 
+/// AMP components layout attribute validation.
+class AmpLayoutValid extends AnalysisRule {
+  static const validLayouts = {
+    'nodisplay',
+    'fixed',
+    'responsive',
+    'fixed-height',
+    'fill',
+    'container',
+    'flex-item',
+    'intrinsic',
+  };
+
+  static final LintCode code = warning(
+    'blogger_theme_amp_layout_valid',
+    "Invalid AMP layout value. Expected one of: 'nodisplay', 'fixed', 'responsive', 'fixed-height', 'fill', 'container', 'flex-item', 'intrinsic'.",
+    correction: "Use a valid AMP layout string such as 'responsive' or 'fixed'.",
+  );
+
+  AmpLayoutValid()
+    : super(
+        name: 'blogger_theme_amp_layout_valid',
+        description:
+            'AMP specs restrict layout attribute values to standard AMP layout modes.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpLayoutValidVisitor(this, context),
+    );
+  }
+}
+
+class _AmpLayoutValidVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpLayoutValidVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!node.constructorName.type.name.lexeme.startsWith('Amp')) return;
+    final layoutArg = namedArgument(node, 'layout');
+    if (layoutArg == null) return;
+    final expr = layoutArg.argumentExpression;
+    if (expr is StringLiteral) {
+      final value = expr.stringValue;
+      if (value != null && !AmpLayoutValid.validLayouts.contains(value)) {
+        rule.reportAtNode(layoutArg);
+      }
+    }
+  }
+}
+
+/// `AmpCarousel` type attribute validation.
+class AmpCarouselTypeValid extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_carousel_type_valid',
+    "AmpCarousel type must be either 'carousel' or 'slides'.",
+    correction: "Change type to 'carousel' or 'slides'.",
+  );
+
+  AmpCarouselTypeValid()
+    : super(
+        name: 'blogger_theme_amp_carousel_type_valid',
+        description:
+            'AMP Carousel components only support carousel or slides display types.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpCarouselTypeValidVisitor(this, context),
+    );
+  }
+}
+
+class _AmpCarouselTypeValidVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpCarouselTypeValidVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpCarousel')) return;
+    final typeArg = namedArgument(node, 'type');
+    if (typeArg == null) return;
+    final expr = typeArg.argumentExpression;
+    if (expr is StringLiteral) {
+      final value = expr.stringValue;
+      if (value != null && value != 'carousel' && value != 'slides') {
+        rule.reportAtNode(typeArg);
+      }
+    }
+  }
+}
+
+/// `AmpImg` alt attribute required for accessibility.
+class AmpImgAltRequired extends AnalysisRule {
+  static final LintCode code = warning(
+    'blogger_theme_amp_img_alt_required',
+    "AmpImg requires an 'alt' attribute for accessibility and AMP validation.",
+    correction: "Add 'alt:' parameter with image description.",
+  );
+
+  AmpImgAltRequired()
+    : super(
+        name: 'blogger_theme_amp_img_alt_required',
+        description:
+            'AMP img elements require alt text for accessibility compliance.',
+      );
+
+  @override
+  DiagnosticCode get diagnosticCode => code;
+
+  @override
+  void registerNodeProcessors(
+    RuleVisitorRegistry registry,
+    RuleContext context,
+  ) {
+    registry.addInstanceCreationExpression(
+      this,
+      _AmpImgAltVisitor(this, context),
+    );
+  }
+}
+
+class _AmpImgAltVisitor extends SimpleAstVisitor<void> {
+  final AnalysisRule rule;
+  final RuleContext context;
+
+  _AmpImgAltVisitor(this.rule, this.context);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    if (!isBloggerThemeCreation(node, 'AmpImg')) return;
+    if (namedArgument(node, 'alt') == null) {
+      rule.reportAtNode(node.constructorName);
+    }
+  }
+}
+
 /// Every rule that is on by default.
 List<AnalysisRule> get warningRules => [
   FabSlotAndroidOnly(),
@@ -2192,6 +2350,9 @@ List<AnalysisRule> get warningRules => [
   AmpStoryRequiredArgs(),
   AmpStoryPageIdRequired(),
   AmpConsentIdRequired(),
+  AmpLayoutValid(),
+  AmpCarouselTypeValid(),
+  AmpImgAltRequired(),
 ];
 
 /// Rules that must be enabled in analysis_options.yaml.

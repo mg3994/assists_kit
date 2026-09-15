@@ -29,6 +29,7 @@ import 'src/convert_to_stateless.dart';
 import 'src/move_widget.dart';
 import 'src/remove_widget.dart';
 import 'src/rules/add_amp_iframe_sandbox.dart';
+import 'src/rules/add_amp_img_alt.dart';
 import 'src/rules/add_amp_img_dimensions.dart';
 import 'src/rules/add_barg_name.dart';
 import 'src/rules/add_battr_name.dart';
@@ -96,6 +97,10 @@ class AssistsKitPlugin extends Plugin {
     registry.registerFixForRule(
       AmpImgDimensionsRequired.code,
       AddAmpImgDimensions.new,
+    );
+    registry.registerFixForRule(
+      AmpImgAltRequired.code,
+      AddAmpImgAlt.new,
     );
     registry.registerFixForRule(
       BWidgetTypeRequired.code,

@@ -50,6 +50,9 @@ void main() {
     defineReflectiveTests(AmpStoryRequiredArgsTest);
     defineReflectiveTests(AmpStoryPageIdRequiredTest);
     defineReflectiveTests(AmpConsentIdRequiredTest);
+    defineReflectiveTests(AmpLayoutValidTest);
+    defineReflectiveTests(AmpCarouselTypeValidTest);
+    defineReflectiveTests(AmpImgAltRequiredTest);
   });
 }
 
@@ -860,5 +863,59 @@ class AmpConsentIdRequiredTest extends RuleTest {
 
   Future<void> test_quietWithId() => assertClean(
     "Component build() => AmpConsent(id: 'consent1');",
+  );
+}
+
+@reflectiveTest
+class AmpLayoutValidTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpLayoutValid();
+    super.setUp();
+  }
+
+  Future<void> test_reportsInvalidLayout() => assertWarning(
+    "Component build() => AmpImg(src: 'a.png', width: '10', height: '10', layout: 'invalidLayout');",
+    "layout: 'invalidLayout'",
+  );
+
+  Future<void> test_quietWithValidLayout() => assertClean(
+    "Component build() => AmpImg(src: 'a.png', width: '10', height: '10', layout: 'responsive');",
+  );
+}
+
+@reflectiveTest
+class AmpCarouselTypeValidTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpCarouselTypeValid();
+    super.setUp();
+  }
+
+  Future<void> test_reportsInvalidCarouselType() => assertWarning(
+    "Component build() => AmpCarousel(type: 'invalidType');",
+    "type: 'invalidType'",
+  );
+
+  Future<void> test_quietWithValidCarouselType() => assertClean(
+    "Component build() => AmpCarousel(type: 'slides');",
+  );
+}
+
+@reflectiveTest
+class AmpImgAltRequiredTest extends RuleTest {
+  @override
+  void setUp() {
+    rule = AmpImgAltRequired();
+    super.setUp();
+  }
+
+  Future<void> test_reportsMissingAlt() => assertWarning(
+    "Component build() => AmpImg(src: 'a.png', width: '10', height: '10');",
+    'AmpImg',
+  );
+
+  Future<void> test_quietWithAlt() => assertClean(
+    "Component build() => AmpImg(src: 'a.png', width: '10', height: '10', alt: 'image description');",
   );
 }
